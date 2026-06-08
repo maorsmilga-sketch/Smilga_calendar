@@ -2447,8 +2447,11 @@ async function loadApp() {
 // SERVICE WORKER
 // ============================================================
 function registerSW() {
-  if ('serviceWorker' in navigator)
-    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  if ('serviceWorker' in navigator) {
+    // Use relative path so it works on GitHub Pages (/Smilga_calendar/) and localhost
+    const swPath = new URL('sw.js', window.location.href).pathname;
+    navigator.serviceWorker.register(swPath).catch(()=>{});
+  }
 }
 
 // ============================================================
