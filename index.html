@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4F46E5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="לוח שנה">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%234F46E5'/%3E%3Ctext x='90' y='120' font-size='90' text-anchor='middle'%3E%F0%9F%93%85%3C/text%3E%3C/svg%3E">
+  <title>לוח שנה משפחתי</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Heebo', sans-serif;
+  background: #F1F5F9;
+  color: #1E293B;
+  min-height: 100dvh;
+  direction: rtl;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+/* ===== VARIABLES ===== */
+:root {
+  --maor:        #2563EB;
+  --maor-light:  #DBEAFE;
+  --ravit:       #DB2777;
+  --ravit-light: #FCE7F3;
+  --primary:     #4F46E5;
+  --primary-l:   #EEF2FF;
+  --success:     #10B981;
+  --danger:      #EF4444;
+  --warning:     #F59E0B;
+  --bg:          #F1F5F9;
+  --card:        #FFFFFF;
+  --border:      #E2E8F0;
+  --text:        #1E293B;
+  --text-s:      #64748B;
+  --text-m:      #94A3B8;
+  --r:           14px;
+  --r-s:         10px;
+  --r-xs:        6px;
+  --sh:          0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+  --sh-m:        0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  --sh-lg:       0 10px 25px rgba(0,0,0,.12);
+  --hdr:         58px;
+  --tabs:        46px;
+  --dnav:        46px;
+  --bnav:        66px;
+}
+
+/* ===== SCREENS ===== */
+.screen { position: fixed; inset: 0; display: none; flex-direction: column; overflow: hidden; }
+.screen.active { display: flex; }
+
+/* ===== AUTH ===== */
+#auth-screen {
+  background: linear-gradient(150deg, #0F0C29 0%, #302B63 50%, #24243E 100%);
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 20px;
+}
+.auth-stars {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.auth-stars::before, .auth-stars::after {
+  content: '';
+  position: absolute;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  opacity: .07;
+}
+.auth-stars::before { background: #818CF8; top: -60px; right: -60px; width: 300px; height: 300px; }
+.auth-stars::after  { background: #C084FC; bottom: 60px; left: -40px; }
+
+.auth-header {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 36px; z-index: 1;
+}
+.auth-logo {
+  width: 80px; height: 80px;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  border-radius: 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 32px rgba(99,102,241,.45);
+}
+.auth-title { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -.5px; }
+.auth-sub   { font-size: 14px; color: rgba(255,255,255,.5); margin-top: 4px; }
+
+.auth-prompt {
+  font-size: 17px; font-weight: 600;
+  color: rgba(255,255,255,.85);
+  margin-bottom: 28px; z-index: 1; text-align: center;
+}
+#pattern-canvas { touch-action: none; cursor: pointer; z-index: 1; border-radius: 8px; }
+.auth-msg {
+  margin-top: 20px; min-height: 22px;
+  font-size: 14px; font-weight: 500;
+  color: rgba(255,255,255,.45);
+  z-index: 1; transition: color .2s;
+  text-align: center;
+}
+.auth-msg.error   { color: #FCA5A5; }
+.auth-msg.success { color: #6EE7B7; }
+.auth-hint {
+  margin-top: 28px; z-index: 1;
+  background: rgba(255,255,255,.07);
+  border-radius: 12px; padding: 12px 20px;
+  font-size: 12px; color: rgba(255,255,255,.45);
+  text-align: center; line-height: 1.7;
+}
+
+/* ===== APP SCREEN ===== */
+#app-screen { background: var(--bg); }
+
+/* ===== HEADER ===== */
+#app-header {
+  height: var(--hdr);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 0 var(--border);
+  z-index: 50;
+  padding-top: env(safe-area-inset-top, 0);
+}
+.hdr-user { display: flex; align-items: center; gap: 9px; }
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.hdr-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.hdr-title { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
+.hdr-actions { display: flex; gap: 6px; }
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 9px; border: none;
+  background: var(--bg); color: var(--text-s);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 17px; transition: all .15s;
+}
+.icon-btn:active { transform: scale(.88); }
+
+/* ===== VIEW TABS ===== */
+#view-tabs {
+  height: var(--tabs);
+  background: var(--card);
+  display: flex; padding: 5px 10px; gap: 4px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.vtab {
+  flex: 1; border: none; background: transparent;
+  border-radius: var(--r-s);
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-s); cursor: pointer; transition: all .2s;
+}
+.vtab.active { background: var(--primary-l); color: var(--primary); font-weight: 700; }
+
+/* ===== DATE NAV ===== */
+#date-nav {
+  height: var(--dnav);
+  background: var(--card);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.dnav-btn {
+  width: 38px; height: 38px; border: none; background: transparent;
+  color: var(--text-s); font-size: 22px; cursor: pointer;
+  border-radius: var(--r-s); display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.dnav-btn:active { background: var(--bg); }
+#date-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  cursor: pointer; padding: 5px 12px; border-radius: var(--r-s);
+  transition: background .15s; user-select: none;
+}
+#date-title:active { background: var(--bg); }
+
+/* ===== MAIN CONTENT ===== */
+#main-content {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--bnav);
+}
+
+/* ===== FILTER BAR ===== */
+#filter-bar {
+  padding: 7px 14px;
+  display: flex; gap: 8px; overflow-x: auto;
+  scrollbar-width: none; background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#filter-bar::-webkit-scrollbar { display: none; }
+.fchip {
+  padding: 5px 13px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--card); color: var(--text-s); transition: all .15s;
+  flex-shrink: 0;
+}
+.fchip.on { border-color: var(--primary); background: var(--primary-l); color: var(--primary); }
+
+/* ===== DASHBOARD ===== */
+.dash { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.dash-card {
+  background: var(--card); border-radius: var(--r);
+  padding: 14px 16px; box-shadow: var(--sh);
+}
+.dash-hd {
+  font-size: 13px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+}
+.up-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 7px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.up-item:last-child { border-bottom: none; padding-bottom: 0; }
+.up-bar { width: 3px; height: 34px; border-radius: 2px; flex-shrink: 0; }
+.up-info { flex: 1; min-width: 0; }
+.up-title {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.up-meta { font-size: 12px; color: var(--text-s); margin-top: 1px; }
+.up-when { font-size: 12px; font-weight: 700; color: var(--text-m); flex-shrink: 0; }
+
+.bday-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 7px 0; border-bottom: 1px solid var(--border);
+}
+.bday-item:last-child { border-bottom: none; }
+.bday-av {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, #EC4899, #F43F5E);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.bday-info { flex: 1; }
+.bday-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.bday-sub  { font-size: 12px; color: var(--text-s); margin-top: 1px; }
+.bday-badge {
+  background: linear-gradient(135deg, #EC4899, #F43F5E);
+  color: #fff; border-radius: 20px;
+  padding: 3px 11px; font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.empty-dash { text-align: center; padding: 20px 0; color: var(--text-m); font-size: 14px; }
+
+/* ===== MONTH VIEW ===== */
+.mv { padding: 10px 10px 6px; }
+.mv-heads {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+.mv-head { text-align: center; font-size: 11px; font-weight: 700; color: var(--text-m); padding: 4px 0; }
+.mv-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.mv-cell {
+  min-height: 64px; background: var(--card);
+  border-radius: var(--r-xs); padding: 4px 3px;
+  cursor: pointer; transition: background .12s;
+  border: 1.5px solid transparent; overflow: hidden;
+}
+.mv-cell:active { background: #EFF6FF; }
+.mv-cell.other  { background: transparent; opacity: .35; pointer-events: none; }
+.mv-cell.today  { border-color: var(--primary); }
+.mv-dn {
+  font-size: 12px; font-weight: 600; color: var(--text-s);
+  line-height: 1; margin-bottom: 2px;
+}
+.mv-cell.today .mv-dn {
+  width: 20px; height: 20px;
+  background: var(--primary); color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+}
+.mv-evts { display: flex; flex-direction: column; gap: 1px; }
+.mv-chip {
+  font-size: 9.5px; font-weight: 600; color: #fff;
+  border-radius: 3px; padding: 1px 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.5;
+}
+.mv-more { font-size: 9px; color: var(--text-m); padding: 1px 2px; }
+
+/* ===== WEEK VIEW ===== */
+.wv { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.wv-wrap { min-width: 480px; }
+.wv-hdr {
+  display: grid; grid-template-columns: 42px repeat(7, 1fr);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+.wv-hcell { text-align: center; padding: 6px 2px; }
+.wv-dname { font-size: 10px; font-weight: 600; color: var(--text-m); }
+.wv-dnum {
+  font-size: 15px; font-weight: 800; color: var(--text);
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 1px auto 0;
+}
+.wv-dnum.tod { background: var(--primary); color: #fff; }
+.wv-body { display: grid; grid-template-columns: 42px repeat(7, 1fr); }
+.wv-tcol { display: flex; flex-direction: column; }
+.wv-tlbl {
+  height: 44px; font-size: 10px; color: var(--text-m);
+  padding: 3px 6px 0; border-top: 1px solid var(--border);
+  flex-shrink: 0; text-align: right;
+}
+.wv-dcol { position: relative; border-right: 1px solid var(--border); }
+.wv-slot { height: 44px; border-top: 1px solid var(--border); }
+.wv-evt {
+  position: absolute; left: 2px; right: 2px;
+  border-radius: 5px; padding: 2px 4px;
+  font-size: 10px; font-weight: 700; color: #fff;
+  overflow: hidden; cursor: pointer; z-index: 5;
+  box-shadow: var(--sh);
+}
+
+/* ===== DAY VIEW ===== */
+.dv { }
+.dv-allday {
+  padding: 8px 12px; border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.dv-allday-lbl { font-size: 11px; font-weight: 700; color: var(--text-m); margin-bottom: 5px; }
+.dv-wrap { display: grid; grid-template-columns: 42px 1fr; }
+.dv-dcol { position: relative; }
+.dv-evt {
+  position: absolute; left: 4px; right: 4px;
+  border-radius: var(--r-s); padding: 4px 8px;
+  font-size: 11px; font-weight: 700; color: #fff;
+  overflow: hidden; cursor: pointer; z-index: 5;
+}
+
+/* ===== LIST VIEW ===== */
+.lv { padding: 12px; }
+.lv-dg { margin-bottom: 14px; }
+.lv-dhdr {
+  font-size: 12px; font-weight: 800; color: var(--text-s);
+  padding: 0 4px 7px;
+  display: flex; align-items: center; gap: 8px;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+.lv-dhdr::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.lv-card {
+  background: var(--card); border-radius: var(--r);
+  padding: 11px 13px; margin-bottom: 7px;
+  display: flex; align-items: center; gap: 11px;
+  cursor: pointer; transition: transform .12s;
+  box-shadow: var(--sh); border-right: 4px solid;
+}
+.lv-card:active { transform: scale(.99); }
+.lv-time { font-size: 12px; font-weight: 800; color: var(--text-s); text-align: center; min-width: 46px; flex-shrink: 0; }
+.lv-info { flex: 1; min-width: 0; }
+.lv-title {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lv-meta { font-size: 12px; color: var(--text-s); margin-top: 1px; display: flex; gap: 8px; flex-wrap: wrap; }
+.lv-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+
+/* ===== BOTTOM NAV ===== */
+#bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--bnav);
+  background: var(--card); border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 50;
+  box-shadow: 0 -2px 12px rgba(0,0,0,.06);
+}
+.nbtn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px;
+  height: 100%; border: none; background: transparent;
+  cursor: pointer; color: var(--text-m); font-family: 'Heebo', sans-serif;
+  font-size: 10px; font-weight: 500; border-radius: var(--r-s);
+  transition: color .15s; padding: 6px 0;
+}
+.nbtn:active { background: var(--bg); }
+.nbtn.active { color: var(--primary); }
+.nbtn svg { width: 21px; height: 21px; }
+.nadd {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
+  border: none; color: #fff; font-size: 26px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(79,70,229,.4);
+  transition: transform .2s, box-shadow .2s; flex-shrink: 0;
+}
+.nadd:active { transform: scale(.9); box-shadow: 0 2px 8px rgba(79,70,229,.3); }
+
+/* ===== MODAL ===== */
+.moverlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5);
+  z-index: 200; display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.moverlay.open { opacity: 1; pointer-events: all; }
+.msheet {
+  width: 100%; max-height: 94dvh;
+  background: var(--card); border-radius: var(--r) var(--r) 0 0;
+  display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.32,.72,0,1);
+  overflow: hidden;
+}
+.moverlay.open .msheet { transform: translateY(0); }
+.mhandle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
+.mhdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px 10px; flex-shrink: 0;
+}
+.mtitle { font-size: 18px; font-weight: 800; color: var(--text); }
+.mclose {
+  width: 30px; height: 30px; border: none; background: var(--bg);
+  border-radius: 50%; cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; color: var(--text-s);
+}
+.mbody {
+  flex: 1; overflow-y: auto; padding: 0 18px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+.mftr {
+  padding: 11px 18px;
+  padding-bottom: max(11px, env(safe-area-inset-bottom, 11px));
+  border-top: 1px solid var(--border);
+  display: flex; gap: 9px; flex-shrink: 0;
+}
+
+/* ===== FORM ===== */
+.fg { margin-bottom: 15px; }
+.fg:last-child { margin-bottom: 0; }
+.fl { display: block; font-size: 13px; font-weight: 700; color: var(--text-s); margin-bottom: 5px; }
+.fi {
+  width: 100%; padding: 11px 13px;
+  border: 1.5px solid var(--border); border-radius: var(--r-s);
+  font-family: 'Heebo', sans-serif; font-size: 15px;
+  color: var(--text); background: var(--card); outline: none;
+  transition: border-color .15s; direction: rtl;
+}
+.fi:focus { border-color: var(--primary); }
+.fi::placeholder { color: var(--text-m); }
+textarea.fi { resize: none; }
+.frow { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+
+/* Assigned toggle */
+.assign-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.assign-opt {
+  padding: 10px 8px; border: 2px solid var(--border);
+  border-radius: var(--r-s); cursor: pointer; text-align: center;
+  transition: all .15s;
+}
+.assign-opt.sel-m { border-color: var(--maor); background: var(--maor-light); }
+.assign-opt.sel-r { border-color: var(--ravit); background: var(--ravit-light); }
+.assign-name { font-size: 15px; font-weight: 800; }
+.assign-sub  { font-size: 11px; color: var(--text-m); margin-top: 1px; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 12px 18px; border-radius: var(--r-s);
+  font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; border: none; transition: all .15s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+}
+.btn:active { transform: scale(.97); }
+.btn-p {
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
+  color: #fff; flex: 1;
+  box-shadow: 0 4px 12px rgba(79,70,229,.3);
+}
+.btn-s { background: var(--bg); color: var(--text-s); border: 1.5px solid var(--border); min-width: 80px; }
+.btn-d { background: #FEF2F2; color: var(--danger); border: 1.5px solid #FECACA; }
+
+/* ===== EVENT DETAIL ===== */
+.ed-hdr {
+  padding: 22px 18px 18px; color: #fff;
+}
+.ed-cat   { font-size: 13px; opacity: .75; margin-bottom: 5px; }
+.ed-title { font-size: 21px; font-weight: 800; margin-bottom: 6px; }
+.ed-sub   { font-size: 13px; opacity: .8; }
+.ed-body  { padding: 16px 18px; }
+.ed-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.ed-row:last-child { border-bottom: none; }
+.ed-icon  { font-size: 19px; width: 26px; flex-shrink: 0; }
+.ed-val   { font-size: 15px; color: var(--text); flex: 1; }
+.ed-acts  {
+  display: flex; gap: 9px; padding: 11px 18px;
+  padding-bottom: max(11px, env(safe-area-inset-bottom, 11px));
+  border-top: 1px solid var(--border);
+}
+.wa-btn {
+  background: #25D366; color: #fff; border: none;
+  border-radius: var(--r-s); padding: 12px 16px;
+  font-family: 'Heebo', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; gap: 7px; flex: 1;
+  transition: opacity .15s;
+}
+.wa-btn:active { opacity: .85; }
+
+/* ===== TOAST ===== */
+#toast {
+  position: fixed;
+  bottom: calc(var(--bnav) + 12px);
+  left: 14px; right: 14px;
+  background: #1E293B; color: #fff;
+  padding: 11px 16px; border-radius: var(--r-s);
+  font-size: 14px; font-weight: 600;
+  z-index: 400;
+  transform: translateY(16px); opacity: 0;
+  transition: all .25s; text-align: center;
+  pointer-events: none;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+/* ===== LOADING ===== */
+.spinner {
+  width: 26px; height: 26px; border: 2.5px solid var(--border);
+  border-top-color: var(--primary); border-radius: 50%;
+  animation: spin .6s linear infinite; margin: 40px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim { animation: fadeUp .22s ease-out; }
+
+/* ===== SAFE AREA ===== */
+#app-screen { padding-top: env(safe-area-inset-top, 0); }
+#app-header { height: calc(var(--hdr) + env(safe-area-inset-top, 0)); padding-top: calc(8px + env(safe-area-inset-top, 0)); }
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 600px) {
+  .mv-cell  { min-height: 80px; }
+  .msheet   { max-width: 560px; margin: 0 auto; border-radius: var(--r); }
+  .moverlay { align-items: center; }
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================ -->
+<!-- AUTH SCREEN                                                  -->
+<!-- ============================================================ -->
+<div id="auth-screen" class="screen active">
+  <div class="auth-stars"></div>
+  <div class="auth-header">
+    <div class="auth-logo">📅</div>
+    <div class="auth-title">לוח שנה משפחתי</div>
+    <div class="auth-sub">של מאור ורויית ❤️</div>
+  </div>
+  <div class="auth-prompt" id="auth-prompt">מי אתה? צייר את הדפוס שלך</div>
+  <canvas id="pattern-canvas"></canvas>
+  <div class="auth-msg" id="auth-msg"></div>
+  <div class="auth-hint">
+    <strong style="color:rgba(255,255,255,.65)">רמז:</strong><br>
+    מאור — עמודה שמאלית למטה ◀<br>
+    רויית — עמודה ימנית למטה ▶
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- APP SCREEN                                                   -->
+<!-- ============================================================ -->
+<div id="app-screen" class="screen">
+
+  <!-- Header -->
+  <header id="app-header">
+    <div class="hdr-user">
+      <div class="user-avatar" id="hdr-av"></div>
+      <span class="hdr-name" id="hdr-name"></span>
+    </div>
+    <div class="hdr-title">📅 לוח שנה</div>
+    <div class="hdr-actions">
+      <button class="icon-btn" id="btn-filter" title="סינון">⚙️</button>
+      <button class="icon-btn" id="btn-logout" title="יציאה">🚪</button>
+    </div>
+  </header>
+
+  <!-- View Tabs -->
+  <div id="view-tabs">
+    <button class="vtab active" data-view="month">חודש</button>
+    <button class="vtab" data-view="week">שבוע</button>
+    <button class="vtab" data-view="day">יום</button>
+    <button class="vtab" data-view="list">רשימה</button>
+  </div>
+
+  <!-- Date Navigation -->
+  <div id="date-nav">
+    <button class="dnav-btn" id="btn-prev">‹</button>
+    <div id="date-title">טוען...</div>
+    <button class="dnav-btn" id="btn-next">›</button>
+  </div>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <div id="dashboard-wrap"></div>
+    <div id="cal-view"></div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav id="bottom-nav">
+    <button class="nbtn active" data-view="month">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      לוח
+    </button>
+    <button class="nbtn" data-view="list">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <circle cx="3" cy="6" r="1" fill="currentColor"/>
+        <circle cx="3" cy="12" r="1" fill="currentColor"/>
+        <circle cx="3" cy="18" r="1" fill="currentColor"/>
+      </svg>
+      רשימה
+    </button>
+    <button class="nadd" id="btn-add">+</button>
+    <button class="nbtn" id="btn-today-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      היום
+    </button>
+    <button class="nbtn" id="btn-filter-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+      סינון
+    </button>
+  </nav>
+</div>
+
+<!-- ============================================================ -->
+<!-- EVENT MODAL                                                  -->
+<!-- ============================================================ -->
+<div class="moverlay" id="modal-event">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <div class="mtitle" id="modal-event-title">אירוע חדש</div>
+      <button class="mclose" id="event-close">✕</button>
+    </div>
+    <div class="mbody">
+      <form id="event-form" onsubmit="return false">
+        <div class="fg">
+          <label class="fl">כותרת *</label>
+          <input type="text" class="fi" id="f-title" placeholder="שם האירוע" required>
+        </div>
+        <div class="fg">
+          <label class="fl">תאריך *</label>
+          <input type="date" class="fi" id="f-date" required>
+        </div>
+        <div class="frow fg">
+          <div>
+            <label class="fl">שעת התחלה</label>
+            <input type="time" class="fi" id="f-start">
+          </div>
+          <div>
+            <label class="fl">שעת סיום</label>
+            <input type="time" class="fi" id="f-end">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">קטגוריה</label>
+          <select class="fi" id="f-cat">
+            <option value="family">👨‍👩‍👧‍👦 משפחה</option>
+            <option value="work">💼 עבודה</option>
+            <option value="medical">🏥 רפואה</option>
+            <option value="vacation">✈️ חופשה</option>
+            <option value="birthday">🎂 יום הולדת</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">חזרה</label>
+          <select class="fi" id="f-recur">
+            <option value="none">ללא חזרה</option>
+            <option value="daily">יומי</option>
+            <option value="weekly">שבועי</option>
+            <option value="monthly">חודשי</option>
+            <option value="yearly">שנתי</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">מיקום (אופציונלי)</label>
+          <input type="text" class="fi" id="f-loc" placeholder="כתובת...">
+        </div>
+        <div class="fg">
+          <label class="fl">הערות (אופציונלי)</label>
+          <textarea class="fi" id="f-notes" rows="2" placeholder="הערות נוספות..."></textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">משויך ל</label>
+          <div class="assign-wrap">
+            <div class="assign-opt sel-m" data-uid="maor" id="ao-maor">
+              <div class="assign-name" style="color:var(--maor)">מאור</div>
+              <div class="assign-sub">🔵 כחול</div>
+            </div>
+            <div class="assign-opt" data-uid="ravit" id="ao-ravit">
+              <div class="assign-name" style="color:var(--ravit)">רויית</div>
+              <div class="assign-sub">🩷 ורוד</div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="mftr" id="event-ftr">
+      <button class="btn btn-s" id="event-cancel">ביטול</button>
+      <button class="btn btn-p" id="event-save">💾 שמור</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EVENT DETAIL MODAL                                           -->
+<!-- ============================================================ -->
+<div class="moverlay" id="modal-detail">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FILTER MODAL                                                 -->
+<!-- ============================================================ -->
+<div class="moverlay" id="modal-filter">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <div class="mtitle">סינון</div>
+      <button class="mclose" id="filter-close">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="fg">
+        <label class="fl">הצג אירועים של</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="fchip on" data-fu="all">שניהם</div>
+          <div class="fchip" data-fu="maor" style="border-color:var(--maor);color:var(--maor)">מאור</div>
+          <div class="fchip" data-fu="ravit" style="border-color:var(--ravit);color:var(--ravit)">רויית</div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">קטגוריות</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="fchip on" data-fc="family">👨‍👩‍👧‍👦 משפחה</div>
+          <div class="fchip on" data-fc="work">💼 עבודה</div>
+          <div class="fchip on" data-fc="medical">🏥 רפואה</div>
+          <div class="fchip on" data-fc="vacation">✈️ חופשה</div>
+          <div class="fchip on" data-fc="birthday">🎂 יום הולדת</div>
+        </div>
+      </div>
+    </div>
+    <div class="mftr">
+      <button class="btn btn-s" id="filter-reset">איפוס</button>
+      <button class="btn btn-p" id="filter-apply">החל</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT                                                   -->
+<!-- ============================================================ -->
+<script>
+'use strict';
+
+// ============================================================
+// CONFIG — edit these constants
+// ============================================================
+const SUPABASE_URL      = 'https://hancmszpkpkiifrtpysu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_YWJ9G0X8MQJJbJYiLdqZTg_lft92Wgq';
+const WHATSAPP_NUMBER   = '972501234567'; // ← שנה למספר הרצוי (ללא +)
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+const USERS = {
+  maor: {
+    id: 'maor', name: 'מאור', color: '#2563EB', light: '#DBEAFE',
+    initials: 'מא',
+    pattern: [0, 3, 6, 7, 8]   // עמודה שמאלית למטה + ימינה
+  },
+  ravit: {
+    id: 'ravit', name: 'רויית', color: '#DB2777', light: '#FCE7F3',
+    initials: 'רו',
+    pattern: [2, 5, 8, 7, 6]   // עמודה ימנית למטה + שמאלה
+  }
+};
+
+const CATS = {
+  family:   { name: 'משפחה',    icon: '👨‍👩‍👧‍👦', color: '#10B981' },
+  work:     { name: 'עבודה',    icon: '💼',       color: '#F59E0B' },
+  medical:  { name: 'רפואה',    icon: '🏥',       color: '#EF4444' },
+  vacation: { name: 'חופשה',    icon: '✈️',       color: '#3B82F6' },
+  birthday: { name: 'יום הולדת',icon: '🎂',       color: '#EC4899' }
+};
+
+const DAYS_S  = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+const DAYS_F  = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+const MONTHS  = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+
+const RECUR_LABELS = {
+  none:'', daily:'חוזר יומי', weekly:'חוזר שבועי',
+  monthly:'חוזר חודשי', yearly:'חוזר שנתי'
+};
+
+// Demo events used when Supabase is not configured
+function buildDemoEvents() {
+  const t = new Date();
+  const y = t.getFullYear(), m = String(t.getMonth()+1).padStart(2,'0');
+  const d = (n) => {
+    const dt = new Date(t); dt.setDate(dt.getDate() + n);
+    return dStr(dt);
+  };
+  return [
+    { id:'d1', title:'ישיבת צוות',          date:d(2),  start_time:'10:00', end_time:'11:00', category:'work',     assigned_to:'maor',  created_by:'maor',  recurrence:'weekly'  },
+    { id:'d2', title:'ארוחת שישי משפחתית',  date:d(4),  start_time:'19:00', end_time:'22:00', category:'family',   assigned_to:'ravit', created_by:'ravit', recurrence:'weekly'  },
+    { id:'d3', title:'בדיקה רפואית',         date:d(6),  start_time:'09:30', end_time:'10:00', category:'medical',  assigned_to:'ravit', created_by:'ravit', recurrence:'none'    },
+    { id:'d4', title:'יום הולדת מאור',       date:`${y}-03-15`, start_time:null, end_time:null,  category:'birthday', assigned_to:'maor',  created_by:'ravit', recurrence:'yearly'  },
+    { id:'d5', title:'חופשה בחו"ל',          date:d(14), start_time:'06:00', end_time:null,    category:'vacation', assigned_to:'maor',  created_by:'maor',  recurrence:'none', location:'ברצלונה, ספרד' },
+    { id:'d6', title:'פגישת הורים',           date:d(1),  start_time:'20:00', end_time:'21:00', category:'family',   assigned_to:'ravit', created_by:'ravit', recurrence:'none'    },
+    { id:'d7', title:'יום הולדת רויית',       date:`${y}-07-22`, start_time:null, end_time:null,  category:'birthday', assigned_to:'ravit', created_by:'maor',  recurrence:'yearly'  },
+    { id:'d8', title:'ספורט',                 date:d(0),  start_time:'18:00', end_time:'19:00', category:'work',     assigned_to:'maor',  created_by:'maor',  recurrence:'weekly'  },
+  ];
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let S = {
+  user:     null,
+  view:     'month',
+  date:     new Date(),
+  events:   [],
+  filters:  { users: 'all', cats: new Set(Object.keys(CATS)) },
+  editing:  null,
+  assigned: 'maor',
+  demo:     false
+};
+
+// ============================================================
+// SUPABASE
+// ============================================================
+let sb = null;
+
+function initSB() {
+  if (SUPABASE_URL.startsWith('YOUR')) { S.demo = true; return; }
+  try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+  catch(e) { S.demo = true; }
+}
+
+async function dbFetch() {
+  if (S.demo) return loadLS();
+  const { data, error } = await sb.from('events').select('*').order('date');
+  if (error) { console.warn(error); return loadLS(); }
+  return data || [];
+}
+async function dbCreate(ev) {
+  if (S.demo) return saveLS(ev);
+  const { data, error } = await sb.from('events').insert([ev]).select().single();
+  if (error) { console.warn(error); showToast('שגיאה בשמירה'); return null; }
+  return data;
+}
+async function dbUpdate(id, ev) {
+  if (S.demo) return updateLS(id, ev);
+  const { data, error } = await sb.from('events').update(ev).eq('id', id).select().single();
+  if (error) { console.warn(error); showToast('שגיאה בעדכון'); return null; }
+  return data;
+}
+async function dbDelete(id) {
+  if (S.demo) return deleteLS(id);
+  const { error } = await sb.from('events').delete().eq('id', id);
+  if (error) { console.warn(error); showToast('שגיאה במחיקה'); return false; }
+  return true;
+}
+
+// LocalStorage fallback
+const LS_KEY = 'fc_events_v2';
+function loadLS()     { try { return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); } catch { return []; } }
+function saveLS(ev)   { const evs = loadLS(); const n = {...ev, id:'ls_'+Date.now()}; evs.push(n); localStorage.setItem(LS_KEY, JSON.stringify(evs)); return n; }
+function updateLS(id, ev) { const evs = loadLS(); const i = evs.findIndex(e=>e.id==id); if(i>=0){evs[i]={...evs[i],...ev}; localStorage.setItem(LS_KEY,JSON.stringify(evs)); return evs[i];} return null; }
+function deleteLS(id) { const evs = loadLS().filter(e=>e.id!=id); localStorage.setItem(LS_KEY,JSON.stringify(evs)); return true; }
+
+// ============================================================
+// PATTERN LOCK
+// ============================================================
+class PatternLock {
+  constructor(canvas) {
+    this.c   = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.dots = [];
+    this.pat  = [];
+    this.actv = new Set();
+    this.drawing = false;
+    this.cur  = null;
+    this._buildDots();
+    this._draw();
+    this._bind();
+  }
+  _buildDots() {
+    const sz = this.c.width, sp = sz / 3, off = sp / 2;
+    for (let r = 0; r < 3; r++)
+      for (let c = 0; c < 3; c++)
+        this.dots.push({ x: off + c*sp, y: off + r*sp, i: r*3+c });
+  }
+  _draw() {
+    const { ctx, c } = this;
+    ctx.clearRect(0, 0, c.width, c.height);
+    // Lines
+    if (this.pat.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(this.dots[this.pat[0]].x, this.dots[this.pat[0]].y);
+      for (let i = 1; i < this.pat.length; i++)
+        ctx.lineTo(this.dots[this.pat[i]].x, this.dots[this.pat[i]].y);
+      if (this.drawing && this.cur)
+        ctx.lineTo(this.cur.x, this.cur.y);
+      ctx.strokeStyle = 'rgba(129,140,248,.75)';
+      ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.stroke();
+    } else if (this.drawing && this.cur && this.pat.length === 1) {
+      ctx.beginPath();
+      ctx.moveTo(this.dots[this.pat[0]].x, this.dots[this.pat[0]].y);
+      ctx.lineTo(this.cur.x, this.cur.y);
+      ctx.strokeStyle = 'rgba(129,140,248,.75)';
+      ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
+    }
+    // Dots
+    this.dots.forEach(d => {
+      const on = this.actv.has(d.i);
+      if (on) {
+        ctx.beginPath(); ctx.arc(d.x, d.y, 22, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(129,140,248,.18)'; ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(d.x, d.y, on ? 10 : 7, 0, Math.PI*2);
+      ctx.fillStyle = on ? '#818CF8' : 'rgba(255,255,255,.45)'; ctx.fill();
+      if (!on) {
+        ctx.beginPath(); ctx.arc(d.x, d.y, 7, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+    });
+  }
+  _pos(e) {
+    const r = this.c.getBoundingClientRect();
+    const sx = this.c.width / r.width, sy = this.c.height / r.height;
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left)*sx, y: (src.clientY - r.top)*sy };
+  }
+  _hit(p) { return this.dots.find(d => Math.hypot(d.x-p.x, d.y-p.y) < 26); }
+  _start(e) {
+    e.preventDefault();
+    const p = this._pos(e), d = this._hit(p);
+    if (!d) return;
+    this.drawing = true; this.pat = [d.i]; this.actv = new Set([d.i]); this.cur = p; this._draw();
+  }
+  _move(e) {
+    if (!this.drawing) return; e.preventDefault();
+    this.cur = this._pos(e);
+    const d = this._hit(this.cur);
+    if (d && !this.actv.has(d.i)) { this.pat.push(d.i); this.actv.add(d.i); }
+    this._draw();
+  }
+  _end(e) {
+    if (!this.drawing) return; e.preventDefault();
+    this.drawing = false; this.cur = null;
+    if (this.pat.length < 3) {
+      this.reset(); setMsg('נא לחבר לפחות 3 נקודות', 'error'); return;
+    }
+    const match = matchPat(this.pat);
+    this._draw();
+    if (match) {
+      setMsg('מחובר! ✓', 'success');
+      setTimeout(() => doLogin(match), 650);
+    } else {
+      setMsg('דפוס שגוי — נסה שוב', 'error');
+      setTimeout(() => { this.reset(); setMsg(''); }, 900);
+    }
+  }
+  reset() { this.pat=[]; this.actv=new Set(); this.drawing=false; this.cur=null; this._draw(); }
+  _bind() {
+    const c = this.c;
+    c.addEventListener('touchstart', this._start.bind(this), {passive:false});
+    c.addEventListener('touchmove',  this._move.bind(this),  {passive:false});
+    c.addEventListener('touchend',   this._end.bind(this),   {passive:false});
+    c.addEventListener('mousedown',  this._start.bind(this));
+    c.addEventListener('mousemove',  this._move.bind(this));
+    c.addEventListener('mouseup',    this._end.bind(this));
+  }
+}
+
+function matchPat(input) {
+  for (const [uid, u] of Object.entries(USERS))
+    if (JSON.stringify(u.pattern) === JSON.stringify(input)) return uid;
+  return null;
+}
+function setMsg(txt, type='') {
+  const el = document.getElementById('auth-msg');
+  el.textContent = txt;
+  el.className = 'auth-msg' + (type ? ' '+type : '');
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function doLogin(uid) {
+  S.user = USERS[uid];
+  localStorage.setItem('fc_user', uid);
+  const av = document.getElementById('hdr-av');
+  av.textContent = S.user.initials;
+  av.style.background = S.user.color;
+  document.getElementById('hdr-name').textContent = 'שלום, ' + S.user.name;
+  S.assigned = uid;
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
+  loadApp();
+}
+function doLogout() {
+  localStorage.removeItem('fc_user');
+  S.user = null; S.events = [];
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('auth-screen').classList.add('active');
+  if (window._pl) window._pl.reset();
+  setMsg('');
+}
+function checkSession() {
+  const uid = localStorage.getItem('fc_user');
+  if (uid && USERS[uid]) { doLogin(uid); return true; }
+  return false;
+}
+
+// ============================================================
+// DATE UTILS
+// ============================================================
+function dStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function today() { return dStr(new Date()); }
+function fmtDate(s, fmt='full') {
+  if (!s) return '';
+  const d = new Date(s + 'T12:00:00');
+  const day = d.getDate(), mo = MONTHS[d.getMonth()], yr = d.getFullYear(), dn = DAYS_F[d.getDay()];
+  if (fmt === 'full')       return `${dn}, ${day} ב${mo} ${yr}`;
+  if (fmt === 'short')      return `${day} ב${mo}`;
+  if (fmt === 'month-year') return `${mo} ${yr}`;
+  return s;
+}
+function fmtTime(t) { return t ? t.substring(0,5) : ''; }
+function daysUntil(s) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((new Date(s+'T12:00:00') - now) / 86400000);
+}
+function evColor(ev) {
+  const uid = ev.assigned_to || ev.created_by;
+  return (uid && USERS[uid]) ? USERS[uid].color : '#4F46E5';
+}
+function weekStart(d) {
+  const dt = new Date(d); dt.setDate(dt.getDate() - dt.getDay()); dt.setHours(0,0,0,0); return dt;
+}
+function parseTime(t) {
+  if (!t) return null;
+  const p = t.split(':');
+  return { h: parseInt(p[0]), m: parseInt(p[1]||0) };
+}
+
+// ============================================================
+// RECURRENCE EXPANSION
+// ============================================================
+function expandEvents(events, start, end) {
+  const s = new Date(start+'T00:00:00'), e = new Date(end+'T23:59:59');
+  const result = [];
+  for (const ev of events) {
+    const base = new Date(ev.date+'T12:00:00');
+    if (!ev.recurrence || ev.recurrence === 'none') {
+      if (base >= s && base <= e) result.push(ev);
+      continue;
+    }
+    // original if in range
+    if (base >= s && base <= e) result.push(ev);
+    // generate future instances
+    const cur = new Date(base); let iter = 0;
+    while (iter++ < 600) {
+      switch(ev.recurrence) {
+        case 'daily':   cur.setDate(cur.getDate()+1); break;
+        case 'weekly':  cur.setDate(cur.getDate()+7); break;
+        case 'monthly': cur.setMonth(cur.getMonth()+1); break;
+        case 'yearly':  cur.setFullYear(cur.getFullYear()+1); break;
+      }
+      if (cur > e) break;
+      if (cur >= s) {
+        result.push({...ev, date: dStr(cur), id: ev.id+'__'+dStr(cur), _orig: ev.id});
+      }
+    }
+  }
+  return result;
+}
+
+// ============================================================
+// FILTERING
+// ============================================================
+function filtered(evs) {
+  return evs.filter(ev => {
+    if (S.filters.users !== 'all') {
+      if (ev.assigned_to !== S.filters.users && ev.created_by !== S.filters.users) return false;
+    }
+    if (ev.category && !S.filters.cats.has(ev.category)) return false;
+    return true;
+  });
+}
+function evsByDate(dateStr) {
+  return filtered(expandEvents(S.events, dateStr, dateStr));
+}
+function evsInRange(s, e) {
+  return filtered(expandEvents(S.events, s, e)).sort((a,b) => {
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    if (a.start_time && b.start_time) return a.start_time.localeCompare(b.start_time);
+    return 0;
+  });
+}
+
+// ============================================================
+// CALENDAR RENDER
+// ============================================================
+function renderCal() {
+  updateTitle();
+  const c = document.getElementById('cal-view');
+  c.style.opacity = '0';
+  setTimeout(() => {
+    switch(S.view) {
+      case 'month': renderMonth(c); break;
+      case 'week':  renderWeek(c);  break;
+      case 'day':   renderDay(c);   break;
+      case 'list':  renderList(c);  break;
+    }
+    c.style.opacity = '1'; c.style.transition = 'opacity .2s';
+  }, 40);
+  if (S.view === 'month' || S.view === 'list') renderDash();
+  else document.getElementById('dashboard-wrap').innerHTML = '';
+}
+
+function updateTitle() {
+  const d = S.date;
+  let t = '';
+  switch(S.view) {
+    case 'month': t = fmtDate(dStr(d), 'month-year'); break;
+    case 'week': {
+      const ws = weekStart(d), we = new Date(ws); we.setDate(we.getDate()+6);
+      t = ws.getMonth()===we.getMonth()
+        ? `${ws.getDate()}–${we.getDate()} ב${MONTHS[ws.getMonth()]}`
+        : `${ws.getDate()} ${MONTHS[ws.getMonth()]} – ${we.getDate()} ${MONTHS[we.getMonth()]}`;
+      break;
+    }
+    case 'day':  t = fmtDate(dStr(d)); break;
+    case 'list': t = fmtDate(dStr(d), 'month-year'); break;
+  }
+  document.getElementById('date-title').textContent = t;
+}
+
+function navigate(dir) {
+  const d = S.date;
+  switch(S.view) {
+    case 'month': S.date = new Date(d.getFullYear(), d.getMonth()+dir, 1); break;
+    case 'week':  S.date = new Date(d.getTime() + dir*7*86400000); break;
+    case 'day':   S.date = new Date(d.getTime() + dir*86400000); break;
+    case 'list':  S.date = new Date(d.getFullYear(), d.getMonth()+dir, 1); break;
+  }
+  renderCal();
+}
+
+// ——— Month ———
+function renderMonth(c) {
+  const d = S.date, Y = d.getFullYear(), M = d.getMonth();
+  const first = new Date(Y, M, 1).getDay();
+  const daysM = new Date(Y, M+1, 0).getDate();
+  const cells  = Math.ceil((first + daysM) / 7) * 7;
+  const rangeS = new Date(Y, M, 1 - first);
+  const rangeE = new Date(rangeS); rangeE.setDate(rangeS.getDate() + cells - 1);
+  const evs = evsInRange(dStr(rangeS), dStr(rangeE));
+  const byDate = {};
+  evs.forEach(ev => { (byDate[ev.date] = byDate[ev.date]||[]).push(ev); });
+
+  const heads = DAYS_S.map(h => `<div class="mv-head">${h}</div>`).join('');
+  let cellsHTML = '', cur = new Date(rangeS);
+  for (let i = 0; i < cells; i++) {
+    const ds = dStr(cur), inM = cur.getMonth()===M, isT = ds===today();
+    const dayEvs = byDate[ds]||[];
+    const chips = dayEvs.slice(0,3).map(ev =>
+      `<div class="mv-chip" style="background:${evColor(ev)}" title="${ev.title}">${ev.title}</div>`
+    ).join('');
+    const more = dayEvs.length > 3 ? `<div class="mv-more">+${dayEvs.length-3}</div>` : '';
+    cellsHTML += `<div class="mv-cell ${inM?'':'other'} ${isT?'today':''}" data-date="${ds}" onclick="gotoDay('${ds}')">
+      <div class="mv-dn">${cur.getDate()}</div>
+      <div class="mv-evts">${chips}${more}</div>
+    </div>`;
+    cur.setDate(cur.getDate()+1);
+  }
+  c.innerHTML = `<div class="mv anim"><div class="mv-heads">${heads}</div><div class="mv-grid">${cellsHTML}</div></div>`;
+}
+
+function gotoDay(ds) {
+  S.view = 'day'; S.date = new Date(ds+'T12:00:00');
+  setViewTab('day'); renderCal();
+}
+
+// ——— Week ———
+function renderWeek(c) {
+  const ws = weekStart(S.date);
+  const days = Array.from({length:7}, (_,i) => { const d=new Date(ws); d.setDate(ws.getDate()+i); return d; });
+  const evs  = evsInRange(dStr(days[0]), dStr(days[6]));
+  const HOURS = Array.from({length:17}, (_,i) => i+7); // 7–23
+
+  const hdrCells = `<div class="wv-hcell"></div>` + days.map(d => {
+    const isT = dStr(d)===today();
+    return `<div class="wv-hcell"><div class="wv-dname">${DAYS_S[d.getDay()]}</div><div class="wv-dnum ${isT?'tod':''}">${d.getDate()}</div></div>`;
+  }).join('');
+
+  const tCol = HOURS.map(h => `<div class="wv-tlbl">${String(h).padStart(2,'0')}:00</div>`).join('');
+
+  const dayCols = days.map(d => {
+    const ds = dStr(d);
+    const dayEvs = evs.filter(e => e.date===ds && e.start_time);
+    const slots  = HOURS.map(() => `<div class="wv-slot"></div>`).join('');
+    const evHTML = dayEvs.map(ev => {
+      const st = parseTime(ev.start_time), en = ev.end_time ? parseTime(ev.end_time) : {h:st.h+1,m:st.m};
+      const top = (st.h - 7)*44 + st.m/60*44;
+      const hgt = Math.max(22, (en.h - st.h)*44 + (en.m - st.m)/60*44);
+      return `<div class="wv-evt" style="top:${top}px;height:${hgt}px;background:${evColor(ev)}" onclick="showDetail('${ev.id}')">${ev.title}</div>`;
+    }).join('');
+    return `<div class="wv-dcol" style="position:relative">${slots}${evHTML}</div>`;
+  }).join('');
+
+  c.innerHTML = `<div class="wv anim"><div class="wv-wrap"><div class="wv-hdr">${hdrCells}</div><div class="wv-body"><div class="wv-tcol">${tCol}</div>${dayCols}</div></div></div>`;
+}
+
+// ——— Day ———
+function renderDay(c) {
+  const ds   = dStr(S.date);
+  const all  = evsInRange(ds, ds);
+  const HOURS = Array.from({length:17}, (_,i) => i+7);
+  const withTime = all.filter(e => e.start_time);
+  const allDay   = all.filter(e => !e.start_time);
+
+  const allDayHTML = allDay.length ? `<div class="dv-allday">
+    <div class="dv-allday-lbl">כל היום</div>
+    ${allDay.map(ev => `<div class="lv-card" style="border-right-color:${evColor(ev)};margin-bottom:5px" onclick="showDetail('${ev.id}')">
+      <div class="lv-info"><div class="lv-title">${ev.title}</div><div class="lv-meta">${CATS[ev.category]?.icon||''} ${CATS[ev.category]?.name||''}</div></div></div>`).join('')}
+  </div>` : '';
+
+  const tCol = HOURS.map(h => `<div class="wv-tlbl">${String(h).padStart(2,'0')}:00</div>`).join('');
+  const slots = HOURS.map(() => `<div class="wv-slot"></div>`).join('');
+  const evHTML = withTime.map(ev => {
+    const st = parseTime(ev.start_time), en = ev.end_time ? parseTime(ev.end_time) : {h:st.h+1,m:st.m};
+    const top = (st.h-7)*44 + st.m/60*44;
+    const hgt = Math.max(32, (en.h-st.h)*44 + (en.m-st.m)/60*44);
+    return `<div class="dv-evt" style="top:${top}px;height:${hgt}px;background:${evColor(ev)}" onclick="showDetail('${ev.id}')">
+      <div style="font-weight:800;font-size:12px">${ev.title}</div>
+      <div style="font-size:10px;opacity:.85">${fmtTime(ev.start_time)}${ev.end_time?' – '+fmtTime(ev.end_time):''}</div>
+    </div>`;
+  }).join('');
+
+  c.innerHTML = `<div class="dv anim">${allDayHTML}<div class="dv-wrap"><div class="wv-tcol">${tCol}</div><div class="dv-dcol" style="position:relative">${slots}${evHTML}</div></div></div>`;
+}
+
+// ——— List ———
+function renderList(c) {
+  const sd = new Date(S.date.getFullYear(), S.date.getMonth(), 1);
+  const ed = new Date(S.date.getFullYear(), S.date.getMonth()+3, 0);
+  const evs = evsInRange(dStr(sd), dStr(ed));
+  if (!evs.length) {
+    c.innerHTML = `<div class="lv anim"><div style="text-align:center;padding:60px 20px;color:var(--text-m)"><div style="font-size:48px">📭</div><div style="margin-top:12px;font-size:15px">אין אירועים בתקופה זו</div></div></div>`;
+    return;
+  }
+  const grouped = {};
+  evs.forEach(ev => (grouped[ev.date]=grouped[ev.date]||[]).push(ev));
+  const td = today(), tm = dStr(new Date(Date.now()+86400000));
+  let html = '';
+  for (const [ds, dayEvs] of Object.entries(grouped)) {
+    let lbl = fmtDate(ds);
+    if (ds===td) lbl = `היום — ${lbl}`;
+    else if (ds===tm) lbl = `מחר — ${lbl}`;
+    const cards = dayEvs.map(ev => {
+      const col = evColor(ev), cat = CATS[ev.category];
+      const time = ev.start_time ? `${fmtTime(ev.start_time)}${ev.end_time?' – '+fmtTime(ev.end_time):''}` : 'כל היום';
+      return `<div class="lv-card" style="border-right-color:${col}" onclick="showDetail('${ev.id}')">
+        <div class="lv-time">${time}</div>
+        <div class="lv-info">
+          <div class="lv-title">${ev.title}</div>
+          <div class="lv-meta">${cat?cat.icon+' '+cat.name:''}${ev.location?'<span>📍 '+ev.location+'</span>':''}</div>
+        </div>
+        <div class="lv-dot" style="background:${col}"></div>
+      </div>`;
+    }).join('');
+    html += `<div class="lv-dg"><div class="lv-dhdr">${lbl}</div>${cards}</div>`;
+  }
+  c.innerHTML = `<div class="lv anim">${html}</div>`;
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function renderDash() {
+  const wrap = document.getElementById('dashboard-wrap');
+  const now = new Date(); now.setHours(0,0,0,0);
+  const in7 = new Date(now); in7.setDate(in7.getDate()+7);
+  const upcoming = evsInRange(dStr(now), dStr(in7));
+  const birthdays = getBirthdays(S.events, 90);
+
+  const upRows = upcoming.length
+    ? upcoming.slice(0,6).map(ev => {
+        const du = daysUntil(ev.date);
+        const when = du===0?'היום':du===1?'מחר':`עוד ${du} ימ׳`;
+        const time = ev.start_time ? fmtTime(ev.start_time)+' · ' : '';
+        const cat  = CATS[ev.category];
+        return `<div class="up-item" onclick="showDetail('${ev.id}')">
+          <div class="up-bar" style="background:${evColor(ev)}"></div>
+          <div class="up-info">
+            <div class="up-title">${ev.title}</div>
+            <div class="up-meta">${time}${cat?cat.icon+' '+cat.name:''}</div>
+          </div>
+          <div class="up-when">${when}</div>
+        </div>`;
+      }).join('')
+    : `<div class="empty-dash">אין אירועים ב-7 הימים הקרובים</div>`;
+
+  const bdRows = birthdays.slice(0,4).map(b => {
+    const lbl = b.du===0?'היום! 🎉':b.du===1?'מחר! 🎂':`עוד ${b.du} יום`;
+    return `<div class="bday-item">
+      <div class="bday-av">🎂</div>
+      <div class="bday-info">
+        <div class="bday-name">${b.title}</div>
+        <div class="bday-sub">${fmtDate(b.nextDate,'short')}</div>
+      </div>
+      <div class="bday-badge">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML = `<div class="dash anim">
+    <div class="dash-card">
+      <div class="dash-hd">⏰ הקרוב ב-7 ימים</div>
+      ${upRows}
+    </div>
+    ${birthdays.length ? `<div class="dash-card">
+      <div class="dash-hd">🎂 ימי הולדת קרובים</div>
+      ${bdRows}
+    </div>` : ''}
+  </div>`;
+}
+
+function getBirthdays(evs, days) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  return evs
+    .filter(ev => ev.category === 'birthday' && ev.date)
+    .map(ev => {
+      const bd = new Date(ev.date+'T12:00:00');
+      let next = new Date(now.getFullYear(), bd.getMonth(), bd.getDate());
+      if (next < now) next = new Date(now.getFullYear()+1, bd.getMonth(), bd.getDate());
+      const du = Math.round((next-now)/86400000);
+      return {...ev, nextDate: dStr(next), du};
+    })
+    .filter(b => b.du <= days)
+    .sort((a,b) => a.du-b.du);
+}
+
+// ============================================================
+// EVENT DETAIL
+// ============================================================
+let _detailId = null;
+
+function showDetail(eid) {
+  const ev = S.events.find(e=>e.id===eid) || S.events.find(e=>eid.startsWith(e.id+'__'));
+  if (!ev) return;
+  _detailId = ev.id;
+  const col  = evColor(ev), cat = CATS[ev.category];
+  const u    = USERS[ev.assigned_to] || USERS[ev.created_by];
+  const time = ev.start_time
+    ? `${fmtTime(ev.start_time)}${ev.end_time?' – '+fmtTime(ev.end_time):''}`
+    : 'כל היום';
+  let rows = '';
+  rows += `<div class="ed-row"><div class="ed-icon">📅</div><div class="ed-val">${fmtDate(ev.date)}</div></div>`;
+  rows += `<div class="ed-row"><div class="ed-icon">⏰</div><div class="ed-val">${time}</div></div>`;
+  if (cat)         rows += `<div class="ed-row"><div class="ed-icon">${cat.icon}</div><div class="ed-val">${cat.name}</div></div>`;
+  if (ev.location) rows += `<div class="ed-row" onclick="openMaps('${ev.location.replace(/'/g,"\\'")}')" style="cursor:pointer"><div class="ed-icon">📍</div><div class="ed-val" style="color:var(--primary)">${ev.location}</div></div>`;
+  if (ev.recurrence && ev.recurrence!=='none') rows += `<div class="ed-row"><div class="ed-icon">🔄</div><div class="ed-val">${RECUR_LABELS[ev.recurrence]}</div></div>`;
+  if (u)           rows += `<div class="ed-row"><div class="ed-icon">👤</div><div class="ed-val" style="color:${u.color};font-weight:700">${u.name}</div></div>`;
+  if (ev.notes)    rows += `<div class="ed-row"><div class="ed-icon">📝</div><div class="ed-val">${ev.notes}</div></div>`;
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="ed-hdr" style="background:linear-gradient(135deg,${col},${col}cc)">
+      <div class="ed-cat">${cat?cat.icon+' '+cat.name:''}</div>
+      <div class="ed-title">${ev.title}</div>
+      <div class="ed-sub">${fmtDate(ev.date,'short')} · ${time}</div>
+    </div>
+    <div class="ed-body">${rows}</div>
+    <div class="ed-acts">
+      <button class="wa-btn" onclick="shareWA('${ev.id}')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        שתף בוואטסאפ
+      </button>
+      <button class="btn btn-s" onclick="editFromDetail()">✏️ ערוך</button>
+    </div>`;
+  openModal('modal-detail');
+}
+
+function editFromDetail() {
+  const ev = S.events.find(e => e.id === _detailId);
+  if (!ev) return;
+  closeModal('modal-detail');
+  openEdit(ev);
+}
+
+// ============================================================
+// WHATSAPP
+// ============================================================
+function shareWA(eid) {
+  const ev = S.events.find(e=>e.id===eid) || S.events.find(e=>eid.startsWith(e.id+'__'));
+  if (!ev) return;
+  const time = ev.start_time ? `\nשעה: ${fmtTime(ev.start_time)}${ev.end_time?' – '+fmtTime(ev.end_time):''}` : '';
+  const loc  = ev.location ? `\n📍 מיקום: ${ev.location}` : '';
+  const note = ev.notes    ? `\n📝 הערות: ${ev.notes}` : '';
+  const msg  = encodeURIComponent(`📅 *${ev.title}*\nתאריך: ${fmtDate(ev.date,'short')}${time}${loc}${note}`);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+}
+
+function openMaps(loc) {
+  window.open(`https://maps.google.com/?q=${encodeURIComponent(loc)}`, '_blank');
+}
+
+// ============================================================
+// EVENT MODAL
+// ============================================================
+function openAdd(prefill) {
+  S.editing = null;
+  S.assigned = S.user.id;
+  document.getElementById('modal-event-title').textContent = 'אירוע חדש';
+  document.getElementById('event-form').reset();
+  document.getElementById('f-date').value = prefill || dStr(S.date);
+  updateAssign();
+  const del = document.getElementById('ev-del');
+  if (del) del.remove();
+  openModal('modal-event');
+}
+
+function openEdit(ev) {
+  S.editing  = ev;
+  S.assigned = ev.assigned_to || S.user.id;
+  document.getElementById('modal-event-title').textContent = 'עריכת אירוע';
+  document.getElementById('f-title').value  = ev.title || '';
+  document.getElementById('f-date').value   = ev.date  || '';
+  document.getElementById('f-start').value  = ev.start_time || '';
+  document.getElementById('f-end').value    = ev.end_time   || '';
+  document.getElementById('f-cat').value    = ev.category   || 'family';
+  document.getElementById('f-recur').value  = ev.recurrence || 'none';
+  document.getElementById('f-loc').value    = ev.location   || '';
+  document.getElementById('f-notes').value  = ev.notes      || '';
+  updateAssign();
+  if (!document.getElementById('ev-del')) {
+    const btn = document.createElement('button');
+    btn.id = 'ev-del'; btn.className = 'btn btn-d'; btn.textContent = '🗑️';
+    btn.onclick = confirmDel;
+    document.getElementById('event-ftr').insertBefore(btn, document.getElementById('event-ftr').firstChild);
+  }
+  openModal('modal-event');
+}
+
+function updateAssign() {
+  document.getElementById('ao-maor').className = 'assign-opt' + (S.assigned==='maor' ? ' sel-m' : '');
+  document.getElementById('ao-ravit').className = 'assign-opt' + (S.assigned==='ravit' ? ' sel-r' : '');
+}
+
+async function doSave() {
+  const title = document.getElementById('f-title').value.trim();
+  const date  = document.getElementById('f-date').value;
+  if (!title) { showToast('נא להזין כותרת'); return; }
+  if (!date)  { showToast('נא לבחור תאריך'); return; }
+  const cat   = document.getElementById('f-cat').value;
+  let recur   = document.getElementById('f-recur').value;
+  if (cat === 'birthday') recur = 'yearly';
+  const data  = {
+    title, date,
+    start_time: document.getElementById('f-start').value || null,
+    end_time:   document.getElementById('f-end').value   || null,
+    category: cat, recurrence: recur,
+    location: document.getElementById('f-loc').value.trim()   || null,
+    notes:    document.getElementById('f-notes').value.trim() || null,
+    assigned_to: S.assigned, created_by: S.user.id,
+    color: USERS[S.assigned]?.color || S.user.color
+  };
+  const btn = document.getElementById('event-save');
+  btn.disabled = true; btn.textContent = 'שומר...';
+  let res;
+  if (S.editing) {
+    res = await dbUpdate(S.editing.id, data);
+    if (res) {
+      const i = S.events.findIndex(e=>e.id===S.editing.id);
+      if (i >= 0) S.events[i] = {...S.events[i], ...data};
+      showToast('האירוע עודכן ✓');
+    }
+  } else {
+    res = await dbCreate(data);
+    if (res) { S.events.push(res); showToast('האירוע נוסף ✓'); }
+  }
+  btn.disabled = false; btn.textContent = '💾 שמור';
+  if (res) { closeModal('modal-event'); renderCal(); }
+}
+
+async function confirmDel() {
+  if (!S.editing || !confirm('האם למחוק את האירוע?')) return;
+  const ok = await dbDelete(S.editing.id);
+  if (ok) {
+    S.events = S.events.filter(e => e.id !== S.editing.id);
+    closeModal('modal-event'); closeModal('modal-detail');
+    showToast('האירוע נמחק'); renderCal();
+  }
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id)  { document.getElementById(id).classList.add('open');  document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+
+// ============================================================
+// FILTERS
+// ============================================================
+function openFilter() {
+  document.querySelectorAll('[data-fu]').forEach(el =>
+    el.classList.toggle('on', el.dataset.fu === S.filters.users));
+  document.querySelectorAll('[data-fc]').forEach(el =>
+    el.classList.toggle('on', S.filters.cats.has(el.dataset.fc)));
+  openModal('modal-filter');
+}
+function applyFilter() {
+  const au = document.querySelector('[data-fu].on');
+  S.filters.users = au ? au.dataset.fu : 'all';
+  S.filters.cats  = new Set([...document.querySelectorAll('[data-fc].on')].map(e=>e.dataset.fc));
+  closeModal('modal-filter'); renderCal(); showToast('סינון הוחל');
+}
+function resetFilter() {
+  S.filters.users = 'all';
+  S.filters.cats  = new Set(Object.keys(CATS));
+  document.querySelectorAll('[data-fu]').forEach(el => el.classList.toggle('on', el.dataset.fu==='all'));
+  document.querySelectorAll('[data-fc]').forEach(el => el.classList.add('on'));
+}
+
+// ============================================================
+// VIEW TABS
+// ============================================================
+function setViewTab(v) {
+  S.view = v;
+  document.querySelectorAll('.vtab').forEach(t => t.classList.toggle('active', t.dataset.view===v));
+  document.querySelectorAll('#bottom-nav .nbtn[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view===v));
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let _tt = null;
+function showToast(msg, ms=2600) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+// ============================================================
+// EVENTS BINDING
+// ============================================================
+function bindEvents() {
+  // View tabs
+  document.querySelectorAll('.vtab').forEach(t =>
+    t.addEventListener('click', () => { setViewTab(t.dataset.view); renderCal(); }));
+
+  // Bottom nav views
+  document.querySelectorAll('#bottom-nav .nbtn[data-view]').forEach(b =>
+    b.addEventListener('click', () => { setViewTab(b.dataset.view); renderCal(); }));
+
+  // Date nav
+  document.getElementById('btn-prev').addEventListener('click', () => navigate(-1));
+  document.getElementById('btn-next').addEventListener('click', () => navigate(1));
+  document.getElementById('date-title').addEventListener('click', () => { S.date = new Date(); renderCal(); showToast('חזרת להיום'); });
+
+  // Add
+  document.getElementById('btn-add').addEventListener('click', () => openAdd());
+  // Today
+  document.getElementById('btn-today-nav').addEventListener('click', () => { S.date = new Date(); renderCal(); showToast('חזרת להיום'); });
+  // Filter
+  document.getElementById('btn-filter').addEventListener('click', openFilter);
+  document.getElementById('btn-filter-nav').addEventListener('click', openFilter);
+  // Logout
+  document.getElementById('btn-logout').addEventListener('click', () => { if(confirm('להתנתק?')) doLogout(); });
+
+  // Event modal
+  document.getElementById('event-close').addEventListener('click',  () => closeModal('modal-event'));
+  document.getElementById('event-cancel').addEventListener('click', () => closeModal('modal-event'));
+  document.getElementById('event-save').addEventListener('click', doSave);
+  document.getElementById('f-cat').addEventListener('change', e => { if(e.target.value==='birthday') document.getElementById('f-recur').value='yearly'; });
+
+  // Assign toggle
+  document.querySelectorAll('[data-uid]').forEach(el =>
+    el.addEventListener('click', () => { S.assigned = el.dataset.uid; updateAssign(); }));
+
+  // Detail modal — close on overlay click
+  document.getElementById('modal-detail').addEventListener('click', e => { if(e.target===document.getElementById('modal-detail')) closeModal('modal-detail'); });
+  document.getElementById('modal-event').addEventListener('click',  e => { if(e.target===document.getElementById('modal-event'))  closeModal('modal-event'); });
+
+  // Filter modal
+  document.getElementById('filter-close').addEventListener('click', () => closeModal('modal-filter'));
+  document.getElementById('filter-apply').addEventListener('click', applyFilter);
+  document.getElementById('filter-reset').addEventListener('click', () => { resetFilter(); showToast('הסינון אופס'); });
+  document.querySelectorAll('[data-fu]').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('[data-fu]').forEach(x=>x.classList.remove('on')); c.classList.add('on');
+  }));
+  document.querySelectorAll('[data-fc]').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
+
+  // Swipe navigation
+  let _tx = 0, _ty = 0;
+  document.getElementById('main-content').addEventListener('touchstart', e => {
+    _tx = e.touches[0].clientX; _ty = e.touches[0].clientY;
+  }, {passive:true});
+  document.getElementById('main-content').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - _tx;
+    const dy = e.changedTouches[0].clientY - _ty;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)*1.5) navigate(dx > 0 ? -1 : 1);
+  }, {passive:true});
+}
+
+// ============================================================
+// APP LOAD
+// ============================================================
+async function loadApp() {
+  document.getElementById('cal-view').innerHTML = `<div style="padding:50px 0;text-align:center"><div class="spinner"></div><div style="color:var(--text-m);font-size:14px;margin-top:8px">טוען אירועים...</div></div>`;
+  let evs = await dbFetch();
+  if (!evs.length && S.demo) evs = buildDemoEvents();
+  S.events = evs;
+  renderCal();
+  if (S.demo) showToast('מצב דמו — חבר Supabase לשמירה', 4000);
+}
+
+// ============================================================
+// SERVICE WORKER
+// ============================================================
+function registerSW() {
+  if ('serviceWorker' in navigator)
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initSB();
+  registerSW();
+  bindEvents();
+
+  // Size pattern lock canvas
+  const canvas = document.getElementById('pattern-canvas');
+  const sz = Math.min(window.innerWidth - 80, 264);
+  canvas.width = canvas.height = sz;
+  canvas.style.width = canvas.style.height = sz + 'px';
+  window._pl = new PatternLock(canvas);
+
+  checkSession();
+});
+</script>
+</body>
+</html>
