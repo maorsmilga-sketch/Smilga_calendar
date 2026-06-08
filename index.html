@@ -1513,10 +1513,13 @@ function renderMonth(c) {
     const ds = dStr(cur), inM = cur.getMonth()===M, isT = ds===today();
     const dayEvs = byDate[ds]||[];
     const chips = dayEvs.slice(0,3).map(ev =>
-      `<div class="mv-chip" style="background:${evColor(ev)}" title="${ev.title}">${ev.title}</div>`
+      `<div class="mv-chip" style="background:${evColor(ev)}" title="${ev.title}"
+            onclick="event.stopPropagation();showDetail('${ev.id}')">${ev.title}</div>`
     ).join('');
-    const more = dayEvs.length > 3 ? `<div class="mv-more">+${dayEvs.length-3}</div>` : '';
-    cellsHTML += `<div class="mv-cell ${inM?'':'other'} ${isT?'today':''}" data-date="${ds}" onclick="gotoDay('${ds}')">
+    const more = dayEvs.length > 3
+      ? `<div class="mv-more" onclick="event.stopPropagation();gotoDay('${ds}')">+${dayEvs.length-3} עוד</div>`
+      : '';
+    cellsHTML += `<div class="mv-cell ${inM?'':'other'} ${isT?'today':''}" data-date="${ds}" onclick="openAdd('${ds}')">
       <div class="mv-dn">${cur.getDate()}</div>
       <div class="mv-evts">${chips}${more}</div>
     </div>`;
