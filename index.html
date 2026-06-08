@@ -1498,16 +1498,32 @@ function editFromDetail() {
 function shareWA(eid) {
   const ev = S.events.find(e=>e.id===eid) || S.events.find(e=>eid.startsWith(e.id+'__'));
   if (!ev) return;
-  // שלח למספר של האדם שהאירוע משויך אליו, אחרת לצד השני
+  // שלח תמיד לצד השני
   const assignedUser = USERS[ev.assigned_to] || USERS[ev.created_by];
-  const otherUser = assignedUser?.id === 'maor' ? USERS.ravit : USERS.maor;
-  const targetPhone = otherUser.phone; // שולחים תמיד לצד השני
-  const time = ev.start_time ? `\nשעה: ${fmtTime(ev.start_time)}${ev.end_time?' – '+fmtTime(ev.end_time):''}` : '';
-  const loc  = ev.location ? `\n📍 מיקום: ${ev.location}` : '';
-  const note = ev.notes    ? `\n📝 הערות: ${ev.notes}` : '';
-  const who  = assignedUser ? `\n👤 עבור: ${assignedUser.name}` : '';
-  const msg  = encodeURIComponent(`📅 *${ev.title}*\nתאריך: ${fmtDate(ev.date,'short')}${time}${loc}${who}${note}`);
-  window.open(`https://wa.me/${targetPhone}?text=${msg}`, '_blank');
+  const otherUser    = assignedUser?.id === 'maor' ? USERS.ravit : USERS.maor;
+  const targetPhone  = otherUser.phone;
+
+  // קישור ליומן (כתובת האפליקציה הנוכחית)
+  const calLink = window.location.origin + window.location.pathname;
+
+  // פרטי האירוע
+  const date = `📆 תאריך: ${fmtDate(ev.date)}`;
+  const time = ev.start_time ? `⏰ שעה: ${fmtTime(ev.start_time)}${ev.end_time?' – '+fmtTime(ev.end_time):''}` : '';
+  const loc  = ev.location   ? `📍 מיקום: ${ev.location}` : '';
+  const who  = assignedUser  ? `👤 עבור: ${assignedUser.name}` : '';
+  const note = ev.notes      ? `📝 הערות: ${ev.notes}` : '';
+
+  const lines = [
+    `היי, שים לב שעודכן אירוע ביומן המשותף 📅`,
+    ``,
+    `*${ev.title}*`,
+    date,
+    time, loc, who, note
+  ].filter(Boolean).join('\n');
+
+  const footer = `\n\n🔗 לצפייה ביומן:\n${calLink}`;
+
+  window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(lines + footer)}`, '_blank');
 }
 
 function openMaps(loc) {
