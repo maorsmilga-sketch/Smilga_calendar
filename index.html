@@ -810,7 +810,8 @@ textarea.fi { resize: none; }
 // ============================================================
 const SUPABASE_URL      = 'https://hancmszpkpkiifrtpysu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_YWJ9G0X8MQJJbJYiLdqZTg_lft92Wgq';
-const WHATSAPP_NUMBER   = '972501234567'; // ← שנה למספר הרצוי (ללא +)
+// מספרי WhatsApp — מחליפים אוטומטית לפי מי האירוע משויך אליו
+const WHATSAPP_NUMBER   = '972526699255'; // ברירת מחדל (רויית)
 
 // ============================================================
 // CONSTANTS
@@ -818,12 +819,12 @@ const WHATSAPP_NUMBER   = '972501234567'; // ← שנה למספר הרצוי (�
 const USERS = {
   maor: {
     id: 'maor', name: 'מאור', color: '#2563EB', light: '#DBEAFE',
-    initials: 'מא',
+    initials: 'מא', phone: '972546819166',
     pattern: [0, 3, 6, 7, 8]   // עמודה שמאלית למטה + ימינה
   },
   ravit: {
     id: 'ravit', name: 'רויית', color: '#DB2777', light: '#FCE7F3',
-    initials: 'רו',
+    initials: 'רו', phone: '972526699255',
     pattern: [2, 5, 8, 7, 6]   // עמודה ימנית למטה + שמאלה
   }
 };
@@ -1453,11 +1454,16 @@ function editFromDetail() {
 function shareWA(eid) {
   const ev = S.events.find(e=>e.id===eid) || S.events.find(e=>eid.startsWith(e.id+'__'));
   if (!ev) return;
+  // שלח למספר של האדם שהאירוע משויך אליו, אחרת לצד השני
+  const assignedUser = USERS[ev.assigned_to] || USERS[ev.created_by];
+  const otherUser = assignedUser?.id === 'maor' ? USERS.ravit : USERS.maor;
+  const targetPhone = otherUser.phone; // שולחים תמיד לצד השני
   const time = ev.start_time ? `\nשעה: ${fmtTime(ev.start_time)}${ev.end_time?' – '+fmtTime(ev.end_time):''}` : '';
   const loc  = ev.location ? `\n📍 מיקום: ${ev.location}` : '';
   const note = ev.notes    ? `\n📝 הערות: ${ev.notes}` : '';
-  const msg  = encodeURIComponent(`📅 *${ev.title}*\nתאריך: ${fmtDate(ev.date,'short')}${time}${loc}${note}`);
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+  const who  = assignedUser ? `\n👤 עבור: ${assignedUser.name}` : '';
+  const msg  = encodeURIComponent(`📅 *${ev.title}*\nתאריך: ${fmtDate(ev.date,'short')}${time}${loc}${who}${note}`);
+  window.open(`https://wa.me/${targetPhone}?text=${msg}`, '_blank');
 }
 
 function openMaps(loc) {
