@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#4F46E5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="לוח שנה">
+  <meta name="apple-mobile-web-app-title" content="סמילגה">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%234F46E5'/%3E%3Ctext x='90' y='120' font-size='90' text-anchor='middle'%3E%F0%9F%93%85%3C/text%3E%3C/svg%3E">
-  <title>לוח שנה משפחתי</title>
+  <title>לוח שנה משפחת סמילגה</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -566,10 +566,35 @@ textarea.fi { resize: none; }
 #app-header { height: calc(var(--hdr) + env(safe-area-inset-top, 0)); padding-top: calc(8px + env(safe-area-inset-top, 0)); }
 
 /* ===== RESPONSIVE ===== */
-@media (min-width: 600px) {
-  .mv-cell  { min-height: 80px; }
-  .msheet   { max-width: 560px; margin: 0 auto; border-radius: var(--r); }
+/* ===== MOBILE FIRST — small screens ===== */
+@media (max-height: 680px) {
+  .auth-header { margin-bottom: 20px; }
+  .auth-logo   { width: 60px; height: 60px; font-size: 30px; margin-bottom: 10px; }
+  .auth-title  { font-size: 22px; }
+  .auth-prompt { margin-bottom: 18px; font-size: 15px; }
+  .auth-hint   { display: none; }
+}
+
+/* ===== DESKTOP — center like a phone ===== */
+@media (min-width: 500px) {
+  body { background: #CBD5E1; }
+  .screen {
+    max-width: 430px;
+    left: 50%; right: auto;
+    transform: translateX(-50%);
+    box-shadow: 0 0 60px rgba(0,0,0,.25);
+  }
+  #toast { max-width: 430px; left: 50%; transform: translateX(-50%) translateY(16px); }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #bottom-nav { max-width: 430px; left: 50%; transform: translateX(-50%); }
+  .mv-cell { min-height: 80px; }
+  .msheet  { max-width: 430px; margin: 0 auto; border-radius: var(--r); }
   .moverlay { align-items: center; }
+}
+
+/* ===== Minimum tap target size ===== */
+.icon-btn, .dnav-btn, .nbtn {
+  min-width: 44px; min-height: 44px;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -587,8 +612,8 @@ textarea.fi { resize: none; }
   <div class="auth-stars"></div>
   <div class="auth-header">
     <div class="auth-logo">📅</div>
-    <div class="auth-title">לוח שנה משפחתי</div>
-    <div class="auth-sub">של מאור ורוית ❤️</div>
+    <div class="auth-title">משפחת סמילגה</div>
+    <div class="auth-sub">לוח שנה משפחתי 📅</div>
   </div>
   <div class="auth-prompt" id="auth-prompt">מי אתה? צייר את הדפוס שלך</div>
   <canvas id="pattern-canvas"></canvas>
@@ -611,7 +636,7 @@ textarea.fi { resize: none; }
       <div class="user-avatar" id="hdr-av"></div>
       <span class="hdr-name" id="hdr-name"></span>
     </div>
-    <div class="hdr-title">📅 לוח שנה</div>
+    <div class="hdr-title">📅 משפחת סמילגה</div>
     <div class="hdr-actions">
       <button class="icon-btn" id="btn-filter" title="סינון">⚙️</button>
       <button class="icon-btn" id="btn-logout" title="יציאה">🚪</button>

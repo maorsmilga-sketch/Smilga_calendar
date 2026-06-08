@@ -1,7 +1,7 @@
 {
-  "name": "לוח שנה משפחתי",
-  "short_name": "לוח שנה",
-  "description": "לוח שנה משפחתי של מאור ורוית",
+  "name": "לוח שנה משפחת סמילגה",
+  "short_name": "סמילגה",
+  "description": "לוח שנה משפחתי של מאור ורוית סמילגה",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
