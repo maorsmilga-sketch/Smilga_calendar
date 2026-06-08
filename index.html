@@ -600,6 +600,177 @@ textarea.fi { resize: none; }
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ===== SECTION PAGES ===== */
+.sec-page { padding: 14px; }
+.sec-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.sec-title { font-size: 20px; font-weight: 800; color: var(--text); }
+.sec-subtitle { font-size: 13px; color: var(--text-m); margin-top: 2px; }
+
+/* ===== SHOPPING ===== */
+.shop-toolbar {
+  display: flex; gap: 9px; margin-bottom: 14px;
+}
+.shop-search {
+  flex: 1; padding: 10px 13px;
+  border: 1.5px solid var(--border); border-radius: var(--r-s);
+  font-family: 'Heebo', sans-serif; font-size: 14px; color: var(--text);
+  background: var(--card); outline: none; direction: rtl;
+}
+.shop-search:focus { border-color: var(--primary); }
+.btn-add-item {
+  padding: 10px 16px; border-radius: var(--r-s);
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
+  color: #fff; border: none; font-family: 'Heebo', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.shop-cat-section { margin-bottom: 16px; }
+.shop-cat-hdr {
+  font-size: 12px; font-weight: 800; color: var(--text-m);
+  text-transform: uppercase; letter-spacing: .4px;
+  padding: 0 4px 7px;
+  display: flex; align-items: center; gap: 8px;
+}
+.shop-cat-hdr::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.shop-item {
+  background: var(--card); border-radius: var(--r-s);
+  padding: 12px 13px; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--sh); transition: opacity .2s;
+}
+.shop-item.checked { opacity: .45; }
+.shop-cb {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: all .15s;
+  font-size: 13px;
+}
+.shop-cb.on { background: var(--success); border-color: var(--success); color: #fff; }
+.shop-item-name {
+  flex: 1; font-size: 14px; font-weight: 600; color: var(--text);
+  transition: all .2s;
+}
+.shop-item.checked .shop-item-name { text-decoration: line-through; color: var(--text-m); }
+.shop-item-qty { font-size: 12px; color: var(--text-m); margin-left: 6px; }
+.shop-del {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: #FEF2F2; color: var(--danger);
+  cursor: pointer; font-size: 15px; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+}
+.shop-footer {
+  display: flex; gap: 9px; padding: 14px 0 4px;
+  border-top: 1px solid var(--border); margin-top: 4px;
+}
+.shop-stats { font-size: 13px; color: var(--text-m); padding-top: 10px; flex: 1; }
+
+/* ===== TASKS ===== */
+.task-add-bar {
+  display: flex; gap: 9px; margin-bottom: 16px;
+}
+.task-section-lbl {
+  font-size: 12px; font-weight: 800; color: var(--text-m);
+  text-transform: uppercase; letter-spacing: .4px;
+  padding: 0 4px 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.task-section-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.task-card {
+  background: var(--card); border-radius: var(--r-s);
+  padding: 12px 13px; margin-bottom: 7px;
+  display: flex; align-items: center; gap: 11px;
+  box-shadow: var(--sh); transition: opacity .2s;
+  border-right: 4px solid var(--border);
+}
+.task-card.done-card { opacity: .5; }
+.task-cb {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: all .2s; font-size: 13px;
+}
+.task-cb.on { color: #fff; border-color: transparent; }
+.task-info { flex: 1; min-width: 0; }
+.task-title {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.task-card.done-card .task-title { text-decoration: line-through; color: var(--text-m); }
+.task-meta { font-size: 11px; color: var(--text-m); margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+.task-who {
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.task-del {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: #FEF2F2; color: var(--danger);
+  cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ===== SCORE ===== */
+.score-toggle {
+  display: flex; gap: 6px; margin-bottom: 16px;
+  background: var(--card); padding: 5px; border-radius: var(--r-s);
+  box-shadow: var(--sh);
+}
+.score-toggle-btn {
+  flex: 1; padding: 8px 4px; border: none; border-radius: var(--r-xs);
+  font-family: 'Heebo', sans-serif; font-size: 13px; font-weight: 600;
+  background: transparent; color: var(--text-m); cursor: pointer;
+  transition: all .15s;
+}
+.score-toggle-btn.active { background: var(--primary); color: #fff; }
+.score-vs {
+  background: var(--card); border-radius: var(--r);
+  padding: 20px; margin-bottom: 14px; box-shadow: var(--sh-m);
+  text-align: center;
+}
+.score-players {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.score-player { text-align: center; }
+.score-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 800; color: #fff; margin: 0 auto 6px;
+  position: relative;
+}
+.score-crown {
+  position: absolute; top: -14px; left: 50%;
+  transform: translateX(-50%); font-size: 20px;
+}
+.score-pname { font-size: 15px; font-weight: 800; color: var(--text); }
+.score-num   { font-size: 28px; font-weight: 800; }
+.score-sep   { font-size: 22px; font-weight: 300; color: var(--text-m); }
+.score-bar-wrap {
+  background: var(--bg); border-radius: 20px; height: 10px;
+  overflow: hidden; margin-bottom: 8px;
+  display: flex;
+}
+.score-bar-left  { height: 100%; border-radius: 20px 0 0 20px; transition: width .4s ease; }
+.score-bar-right { height: 100%; border-radius: 0 20px 20px 0; transition: width .4s ease; }
+.score-bar-lbl   { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-m); }
+.score-history {
+  background: var(--card); border-radius: var(--r);
+  padding: 14px 16px; box-shadow: var(--sh);
+}
+.score-hist-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+.score-hist-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid var(--border);
+}
+.score-hist-item:last-child { border-bottom: none; }
+.score-hist-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.score-hist-text { flex: 1; font-size: 13px; color: var(--text); }
+.score-hist-date { font-size: 11px; color: var(--text-m); }
 </style>
 </head>
 
@@ -660,44 +831,52 @@ textarea.fi { resize: none; }
 
   <!-- Main Content -->
   <main id="main-content">
-    <div id="dashboard-wrap"></div>
-    <div id="cal-view"></div>
+    <!-- Calendar section -->
+    <div id="sec-calendar">
+      <div id="dashboard-wrap"></div>
+      <div id="cal-view"></div>
+    </div>
+    <!-- Shopping section -->
+    <div id="sec-shopping" style="display:none"></div>
+    <!-- Tasks section -->
+    <div id="sec-tasks" style="display:none"></div>
+    <!-- Score section -->
+    <div id="sec-score" style="display:none"></div>
   </main>
 
   <!-- Bottom Nav -->
   <nav id="bottom-nav">
-    <button class="nbtn active" data-view="month">
+    <button class="nbtn active" data-sec="calendar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="4" width="18" height="18" rx="2"/>
         <line x1="16" y1="2" x2="16" y2="6"/>
         <line x1="8" y1="2" x2="8" y2="6"/>
         <line x1="3" y1="10" x2="21" y2="10"/>
       </svg>
-      לוח
+      יומן
     </button>
-    <button class="nbtn" data-view="list">
+    <button class="nbtn" data-sec="shopping">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-        <line x1="8" y1="18" x2="21" y2="18"/>
-        <circle cx="3" cy="6" r="1" fill="currentColor"/>
-        <circle cx="3" cy="12" r="1" fill="currentColor"/>
-        <circle cx="3" cy="18" r="1" fill="currentColor"/>
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
       </svg>
-      רשימה
+      קניות
     </button>
     <button class="nadd" id="btn-add">+</button>
-    <button class="nbtn" id="btn-today-nav">
+    <button class="nbtn" data-sec="tasks">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <polyline points="12 6 12 12 16 14"/>
+        <polyline points="9 11 12 14 22 4"/>
+        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
       </svg>
-      היום
+      משימות
     </button>
-    <button class="nbtn" id="btn-filter-nav">
+    <button class="nbtn" data-sec="score">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        <circle cx="12" cy="8" r="6"/>
+        <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
       </svg>
-      סינון
+      תחרות
     </button>
   </nav>
 </div>
@@ -833,6 +1012,81 @@ textarea.fi { resize: none; }
 <div id="toast"></div>
 
 <!-- ============================================================ -->
+<!-- SHOPPING ITEM MODAL                                          -->
+<!-- ============================================================ -->
+<div class="moverlay" id="modal-shop-item">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <div class="mtitle">הוסף מוצר</div>
+      <button class="mclose" id="shop-item-close">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="fg">
+        <label class="fl">שם המוצר *</label>
+        <input type="text" class="fi" id="si-name" placeholder="למשל: חלב, עגבניות...">
+      </div>
+      <div class="fg">
+        <label class="fl">כמות</label>
+        <input type="text" class="fi" id="si-qty" placeholder="למשל: 2, קילו, חבילה...">
+      </div>
+      <div class="fg">
+        <label class="fl">קטגוריה</label>
+        <select class="fi" id="si-cat">
+          <option value="produce">🥦 פירות וירקות</option>
+          <option value="dairy">🥛 מוצרי חלב</option>
+          <option value="meat">🥩 בשר ודגים</option>
+          <option value="bread">🍞 לחם ומאפים</option>
+          <option value="dry">🌾 יבשים ושימורים</option>
+          <option value="cleaning">🧹 ניקיון וכביסה</option>
+          <option value="other">📦 אחר</option>
+        </select>
+      </div>
+    </div>
+    <div class="mftr">
+      <button class="btn btn-s" id="si-cancel">ביטול</button>
+      <button class="btn btn-p" id="si-save">➕ הוסף</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TASK MODAL                                                   -->
+<!-- ============================================================ -->
+<div class="moverlay" id="modal-task">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <div class="mtitle">משימה חדשה</div>
+      <button class="mclose" id="task-close">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="fg">
+        <label class="fl">תיאור המשימה *</label>
+        <input type="text" class="fi" id="tk-title" placeholder="למשל: לשטוף כלים, לקנות מתנה...">
+      </div>
+      <div class="fg">
+        <label class="fl">מיועד ל</label>
+        <div class="assign-wrap">
+          <div class="assign-opt sel-m" data-tuid="maor" id="tao-maor">
+            <div class="assign-name" style="color:var(--maor)">מאור</div>
+            <div class="assign-sub">🔵 כחול</div>
+          </div>
+          <div class="assign-opt" data-tuid="ravit" id="tao-ravit">
+            <div class="assign-name" style="color:var(--ravit)">רוית</div>
+            <div class="assign-sub">🩷 ורוד</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mftr">
+      <button class="btn btn-s" id="tk-cancel">ביטול</button>
+      <button class="btn btn-p" id="tk-save">✅ הוסף משימה</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
 <!-- JAVASCRIPT                                                   -->
 <!-- ============================================================ -->
 <script>
@@ -905,6 +1159,7 @@ function buildDemoEvents() {
 let S = {
   user:     null,
   view:     'month',
+  section:  'calendar',
   date:     new Date(),
   events:   [],
   filters:  { users: 'all', cats: new Set(Object.keys(CATS)) },
@@ -1689,13 +1944,399 @@ function resetFilter() {
 }
 
 // ============================================================
-// VIEW TABS
+// VIEW TABS (calendar)
 // ============================================================
 function setViewTab(v) {
   S.view = v;
   document.querySelectorAll('.vtab').forEach(t => t.classList.toggle('active', t.dataset.view===v));
-  document.querySelectorAll('#bottom-nav .nbtn[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view===v));
 }
+
+// ============================================================
+// SECTION ROUTING
+// ============================================================
+const SECS = ['calendar','shopping','tasks','score'];
+
+function setSection(sec) {
+  S.section = sec;
+  // Show/hide content sections
+  SECS.forEach(s => {
+    document.getElementById('sec-'+s).style.display = s===sec ? '' : 'none';
+  });
+  // Show/hide calendar controls
+  const calOnly = sec === 'calendar';
+  document.getElementById('view-tabs').style.display = calOnly ? '' : 'none';
+  document.getElementById('date-nav').style.display  = calOnly ? '' : 'none';
+  // Update nav buttons
+  document.querySelectorAll('#bottom-nav .nbtn[data-sec]').forEach(b =>
+    b.classList.toggle('active', b.dataset.sec === sec));
+  // Update header title
+  const titles = { calendar:'📅 משפחת סמילגה', shopping:'🛒 רשימת קניות', tasks:'✅ משימות הבית', score:'🏆 תחרות' };
+  document.getElementById('app-header').querySelector('.hdr-title').textContent = titles[sec] || '📅 משפחת סמילגה';
+  // Update FAB action
+  const fabLabel = { calendar: openAdd, shopping: () => openModal('modal-shop-item'), tasks: () => openModal('modal-task'), score: null };
+  document.getElementById('btn-add')._sectionAction = fabLabel[sec];
+  // Render section
+  if (sec === 'shopping') renderShopping();
+  if (sec === 'tasks')    renderTasks();
+  if (sec === 'score')    renderScore();
+  if (sec === 'calendar') renderCal();
+}
+
+// ============================================================
+// SHOPPING — DATA
+// ============================================================
+const SHOP_CATS = {
+  produce:  { name: 'פירות וירקות',     icon: '🥦' },
+  dairy:    { name: 'מוצרי חלב',        icon: '🥛' },
+  meat:     { name: 'בשר ודגים',        icon: '🥩' },
+  bread:    { name: 'לחם ומאפים',       icon: '🍞' },
+  dry:      { name: 'יבשים ושימורים',   icon: '🌾' },
+  cleaning: { name: 'ניקיון וכביסה',    icon: '🧹' },
+  other:    { name: 'אחר',              icon: '📦' }
+};
+
+let _shopItems = [];
+let _shopSearch = '';
+let _taskAssign = 'maor';
+
+async function shopFetch() {
+  if (S.demo) return JSON.parse(localStorage.getItem('fc_shop')||'[]');
+  const { data } = await sb.from('shopping_items').select('*').order('created_at');
+  return data || [];
+}
+async function shopCreate(item) {
+  if (S.demo) {
+    const items = JSON.parse(localStorage.getItem('fc_shop')||'[]');
+    const n = {...item, id:'sh_'+Date.now(), checked:false};
+    items.push(n); localStorage.setItem('fc_shop', JSON.stringify(items)); return n;
+  }
+  const { data } = await sb.from('shopping_items').insert([item]).select().single();
+  return data;
+}
+async function shopToggle(id, checked) {
+  if (S.demo) {
+    const items = JSON.parse(localStorage.getItem('fc_shop')||'[]');
+    const i = items.findIndex(x=>x.id==id); if(i>=0) items[i].checked=checked;
+    localStorage.setItem('fc_shop', JSON.stringify(items)); return;
+  }
+  await sb.from('shopping_items').update({checked}).eq('id',id);
+}
+async function shopDelete(id) {
+  if (S.demo) {
+    const items = JSON.parse(localStorage.getItem('fc_shop')||'[]').filter(x=>x.id!=id);
+    localStorage.setItem('fc_shop', JSON.stringify(items)); return;
+  }
+  await sb.from('shopping_items').delete().eq('id',id);
+}
+async function shopReset() {
+  const checked = _shopItems.filter(x=>x.checked);
+  for (const item of checked) await shopDelete(item.id);
+  _shopItems = _shopItems.filter(x=>!x.checked);
+  renderShopping();
+  showToast(`נמחקו ${checked.length} מוצרים מסומנים`);
+}
+
+// ============================================================
+// SHOPPING — RENDER
+// ============================================================
+async function renderShopping() {
+  const c = document.getElementById('sec-shopping');
+  c.innerHTML = `<div class="sec-page"><div style="text-align:center;padding:40px 0"><div class="spinner"></div></div></div>`;
+  _shopItems = await shopFetch();
+  _renderShoppingUI();
+}
+
+function _renderShoppingUI() {
+  const c = document.getElementById('sec-shopping');
+  const items = _shopItems.filter(i => !_shopSearch || i.name.includes(_shopSearch));
+  const total = _shopItems.length, done = _shopItems.filter(x=>x.checked).length;
+
+  // Group by category
+  const grouped = {};
+  items.forEach(it => { (grouped[it.category||'other'] = grouped[it.category||'other']||[]).push(it); });
+
+  let sectionsHTML = '';
+  for (const [catKey, catItems] of Object.entries(grouped)) {
+    const cat = SHOP_CATS[catKey] || SHOP_CATS.other;
+    const rows = catItems.map(it => `
+      <div class="shop-item ${it.checked?'checked':''}" id="si-${it.id}">
+        <div class="shop-cb ${it.checked?'on':''}" onclick="toggleShopItem('${it.id}',${!it.checked})">${it.checked?'✓':''}</div>
+        <span class="shop-item-name">${it.name}</span>
+        ${it.quantity ? `<span class="shop-item-qty">${it.quantity}</span>` : ''}
+        <button class="shop-del" onclick="deleteShopItem('${it.id}')">✕</button>
+      </div>`).join('');
+    sectionsHTML += `<div class="shop-cat-section">
+      <div class="shop-cat-hdr">${cat.icon} ${cat.name}</div>
+      ${rows}
+    </div>`;
+  }
+
+  if (!items.length) sectionsHTML = `<div style="text-align:center;padding:48px 20px;color:var(--text-m)">
+    <div style="font-size:48px">🛒</div>
+    <div style="margin-top:12px;font-size:15px">${_shopSearch ? 'לא נמצאו מוצרים' : 'הרשימה ריקה — הוסף מוצרים!'}</div>
+  </div>`;
+
+  c.innerHTML = `<div class="sec-page">
+    <div class="shop-toolbar">
+      <input type="search" class="shop-search" id="shop-search-inp" placeholder="🔍 חיפוש מוצר..." value="${_shopSearch}" oninput="shopSearch(this.value)">
+      <button class="btn-add-item" onclick="openModal('modal-shop-item')">➕ הוסף</button>
+    </div>
+    ${sectionsHTML}
+    ${total > 0 ? `<div class="shop-footer">
+      <div class="shop-stats">${done} מתוך ${total} מוצרים ✓</div>
+      ${done > 0 ? `<button class="btn btn-d" style="font-size:13px;padding:9px 14px" onclick="shopReset()">🗑️ נקה מסומנים (${done})</button>` : ''}
+    </div>` : ''}
+  </div>`;
+}
+
+function shopSearch(val) { _shopSearch = val; _renderShoppingUI(); }
+
+async function toggleShopItem(id, checked) {
+  const item = _shopItems.find(x=>x.id==id); if (!item) return;
+  item.checked = checked;
+  await shopToggle(id, checked);
+  _renderShoppingUI();
+}
+
+async function deleteShopItem(id) {
+  await shopDelete(id);
+  _shopItems = _shopItems.filter(x=>x.id!=id);
+  _renderShoppingUI();
+}
+
+async function saveShopItem() {
+  const name = document.getElementById('si-name').value.trim();
+  if (!name) { showToast('נא להזין שם מוצר'); return; }
+  const item = {
+    name,
+    quantity: document.getElementById('si-qty').value.trim() || null,
+    category: document.getElementById('si-cat').value,
+    added_by: S.user.id, checked: false
+  };
+  const saved = await shopCreate(item);
+  if (saved) {
+    _shopItems.push(saved);
+    closeModal('modal-shop-item');
+    document.getElementById('si-name').value = '';
+    document.getElementById('si-qty').value  = '';
+    _renderShoppingUI();
+    showToast(`${name} נוסף לרשימה ✓`);
+  }
+}
+
+// ============================================================
+// TASKS — DATA
+// ============================================================
+let _tasks = [];
+
+async function tasksFetch() {
+  if (S.demo) return JSON.parse(localStorage.getItem('fc_tasks')||'[]');
+  const { data } = await sb.from('tasks').select('*').order('created_at', {ascending:false});
+  return data || [];
+}
+async function tasksCreate(task) {
+  if (S.demo) {
+    const tasks = JSON.parse(localStorage.getItem('fc_tasks')||'[]');
+    const n = {...task, id:'tk_'+Date.now(), done:false};
+    tasks.unshift(n); localStorage.setItem('fc_tasks', JSON.stringify(tasks)); return n;
+  }
+  const { data } = await sb.from('tasks').insert([task]).select().single();
+  return data;
+}
+async function tasksToggle(id, done) {
+  const now = done ? new Date().toISOString() : null;
+  const patch = { done, done_by: done ? S.user.id : null, done_at: now };
+  if (S.demo) {
+    const tasks = JSON.parse(localStorage.getItem('fc_tasks')||'[]');
+    const i = tasks.findIndex(x=>x.id==id); if(i>=0) Object.assign(tasks[i], patch);
+    localStorage.setItem('fc_tasks', JSON.stringify(tasks)); return;
+  }
+  await sb.from('tasks').update(patch).eq('id',id);
+}
+async function tasksDelete(id) {
+  if (S.demo) {
+    const tasks = JSON.parse(localStorage.getItem('fc_tasks')||'[]').filter(x=>x.id!=id);
+    localStorage.setItem('fc_tasks', JSON.stringify(tasks)); return;
+  }
+  await sb.from('tasks').delete().eq('id',id);
+}
+
+// ============================================================
+// TASKS — RENDER
+// ============================================================
+async function renderTasks() {
+  const c = document.getElementById('sec-tasks');
+  c.innerHTML = `<div class="sec-page"><div style="text-align:center;padding:40px 0"><div class="spinner"></div></div></div>`;
+  _tasks = await tasksFetch();
+  _renderTasksUI();
+}
+
+function _renderTasksUI() {
+  const c = document.getElementById('sec-tasks');
+  const open   = _tasks.filter(t => !t.done);
+  const closed = _tasks.filter(t =>  t.done);
+
+  const taskCard = (t) => {
+    const u = USERS[t.assigned_to] || USERS[t.created_by] || USERS.maor;
+    const doneBy = t.done && USERS[t.done_by] ? USERS[t.done_by] : null;
+    const meta = doneBy ? `בוצע ע"י ${doneBy.name}` : (u ? `מיועד ל-${u.name}` : '');
+    return `<div class="task-card ${t.done?'done-card':''}" style="border-right-color:${u.color}">
+      <div class="task-cb ${t.done?'on':''}" style="${t.done?'background:'+u.color:''}"
+           onclick="toggleTask('${t.id}',${!t.done})">${t.done?'✓':''}</div>
+      <div class="task-info">
+        <div class="task-title">${t.title}</div>
+        <div class="task-meta">
+          <div class="task-who" style="background:${u.color}">${u.initials}</div>
+          ${meta}
+        </div>
+      </div>
+      <button class="task-del" onclick="deleteTask('${t.id}')">✕</button>
+    </div>`;
+  };
+
+  const openHTML = open.length
+    ? open.map(taskCard).join('')
+    : `<div style="text-align:center;padding:32px 20px;color:var(--text-m)"><div style="font-size:40px">🎉</div><div style="margin-top:8px;font-size:14px">אין משימות פתוחות!</div></div>`;
+
+  const closedHTML = closed.length
+    ? `<div style="margin-top:18px">
+        <div class="task-section-lbl">הושלמו (${closed.length})</div>
+        ${closed.slice(0,5).map(taskCard).join('')}
+      </div>`
+    : '';
+
+  c.innerHTML = `<div class="sec-page">
+    <div class="task-add-bar">
+      <button class="btn btn-p" style="flex:1" onclick="openModal('modal-task')">➕ הוסף משימה</button>
+    </div>
+    <div class="task-section-lbl">פתוחות (${open.length})</div>
+    ${openHTML}
+    ${closedHTML}
+  </div>`;
+}
+
+async function toggleTask(id, done) {
+  const t = _tasks.find(x=>x.id==id); if(!t) return;
+  t.done = done; t.done_by = done ? S.user.id : null; t.done_at = done ? new Date().toISOString() : null;
+  await tasksToggle(id, done);
+  _renderTasksUI();
+  if (done) showToast('משימה הושלמה! 🎉');
+}
+async function deleteTask(id) {
+  if (!confirm('למחוק את המשימה?')) return;
+  await tasksDelete(id);
+  _tasks = _tasks.filter(x=>x.id!=id);
+  _renderTasksUI();
+}
+async function saveTask() {
+  const title = document.getElementById('tk-title').value.trim();
+  if (!title) { showToast('נא להזין תיאור משימה'); return; }
+  const task = { title, assigned_to: _taskAssign, created_by: S.user.id, done: false };
+  const saved = await tasksCreate(task);
+  if (saved) {
+    _tasks.unshift(saved);
+    closeModal('modal-task');
+    document.getElementById('tk-title').value = '';
+    _renderTasksUI();
+    showToast('משימה נוספה ✓');
+  }
+}
+function updateTaskAssign() {
+  document.getElementById('tao-maor').className  = 'assign-opt' + (_taskAssign==='maor'  ? ' sel-m' : '');
+  document.getElementById('tao-ravit').className = 'assign-opt' + (_taskAssign==='ravit' ? ' sel-r' : '');
+}
+
+// ============================================================
+// SCORE — RENDER
+// ============================================================
+let _scorePeriod = 'week'; // week | month | all
+
+async function renderScore() {
+  const c = document.getElementById('sec-score');
+  c.innerHTML = `<div class="sec-page"><div style="text-align:center;padding:40px 0"><div class="spinner"></div></div></div>`;
+  if (!_tasks.length) _tasks = await tasksFetch();
+  _renderScoreUI();
+}
+
+function _renderScoreUI() {
+  const c = document.getElementById('sec-score');
+  const now = new Date();
+
+  function inPeriod(t) {
+    if (!t.done || !t.done_at) return false;
+    const dt = new Date(t.done_at);
+    if (_scorePeriod === 'all') return true;
+    if (_scorePeriod === 'month') {
+      return dt.getFullYear()===now.getFullYear() && dt.getMonth()===now.getMonth();
+    }
+    // week
+    const weekAgo = new Date(now); weekAgo.setDate(now.getDate()-7);
+    return dt >= weekAgo;
+  }
+
+  const periodTasks = _tasks.filter(inPeriod);
+  const maorCount = periodTasks.filter(t => t.done_by==='maor').length;
+  const ravitCount = periodTasks.filter(t => t.done_by==='ravit').length;
+  const total = maorCount + ravitCount || 1;
+  const maorPct = Math.round(maorCount/total*100);
+  const ravitPct = 100 - maorPct;
+  const maorLeads = maorCount >= ravitCount;
+
+  const toggleBtns = [
+    {k:'week', l:'שבוע'}, {k:'month', l:'חודש'}, {k:'all', l:'הכל'}
+  ].map(x => `<button class="score-toggle-btn ${_scorePeriod===x.k?'active':''}" onclick="setScorePeriod('${x.k}')">${x.l}</button>`).join('');
+
+  const recent = [..._tasks].filter(t=>t.done&&t.done_by).sort((a,b)=>new Date(b.done_at)-new Date(a.done_at)).slice(0,8);
+  const histRows = recent.map(t => {
+    const u = USERS[t.done_by];
+    const dt = new Date(t.done_at);
+    const lbl = `${dt.getDate()}/${dt.getMonth()+1}`;
+    return `<div class="score-hist-item">
+      <div class="score-hist-dot" style="background:${u?.color||'#ccc'}"></div>
+      <div class="score-hist-text">${t.title}</div>
+      <div class="score-hist-date">${u?.name||''} · ${lbl}</div>
+    </div>`;
+  }).join('') || `<div style="color:var(--text-m);font-size:13px;padding:12px 0">עדיין אין היסטוריה</div>`;
+
+  c.innerHTML = `<div class="sec-page">
+    <div class="score-toggle">${toggleBtns}</div>
+    <div class="score-vs">
+      <div class="score-players">
+        <div class="score-player">
+          <div class="score-avatar" style="background:var(--maor)">
+            ${maorLeads && maorCount>0 ? '<div class="score-crown">👑</div>' : ''}
+            מא
+          </div>
+          <div class="score-pname">מאור</div>
+          <div class="score-num" style="color:var(--maor)">${maorCount}</div>
+        </div>
+        <div class="score-sep">VS</div>
+        <div class="score-player">
+          <div class="score-avatar" style="background:var(--ravit)">
+            ${!maorLeads && ravitCount>0 ? '<div class="score-crown">👑</div>' : ''}
+            רו
+          </div>
+          <div class="score-pname">רוית</div>
+          <div class="score-num" style="color:var(--ravit)">${ravitCount}</div>
+        </div>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-left"  style="width:${maorPct}%;background:var(--maor)"></div>
+        <div class="score-bar-right" style="width:${ravitPct}%;background:var(--ravit)"></div>
+      </div>
+      <div class="score-bar-lbl">
+        <span style="color:var(--maor)">${maorPct}%</span>
+        <span style="color:var(--ravit)">${ravitPct}%</span>
+      </div>
+    </div>
+    <div class="score-history">
+      <div class="score-hist-title">📋 משימות שהושלמו לאחרונה</div>
+      ${histRows}
+    </div>
+  </div>`;
+}
+
+function setScorePeriod(p) { _scorePeriod = p; _renderScoreUI(); }
 
 // ============================================================
 // TOAST
@@ -1724,13 +2365,18 @@ function bindEvents() {
   document.getElementById('btn-next').addEventListener('click', () => navigate(1));
   document.getElementById('date-title').addEventListener('click', () => { S.date = new Date(); renderCal(); showToast('חזרת להיום'); });
 
-  // Add
-  document.getElementById('btn-add').addEventListener('click', () => openAdd());
-  // Today
-  document.getElementById('btn-today-nav').addEventListener('click', () => { S.date = new Date(); renderCal(); showToast('חזרת להיום'); });
+  // Section nav
+  document.querySelectorAll('#bottom-nav .nbtn[data-sec]').forEach(b =>
+    b.addEventListener('click', () => setSection(b.dataset.sec)));
+
+  // FAB — context-aware
+  document.getElementById('btn-add').addEventListener('click', () => {
+    const action = document.getElementById('btn-add')._sectionAction;
+    if (action) action(); else openAdd();
+  });
+
   // Filter
   document.getElementById('btn-filter').addEventListener('click', openFilter);
-  document.getElementById('btn-filter-nav').addEventListener('click', openFilter);
   // Logout
   document.getElementById('btn-logout').addEventListener('click', () => { if(confirm('להתנתק?')) doLogout(); });
 
@@ -1757,6 +2403,20 @@ function bindEvents() {
   }));
   document.querySelectorAll('[data-fc]').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
 
+  // Shopping item modal
+  document.getElementById('shop-item-close').addEventListener('click', () => closeModal('modal-shop-item'));
+  document.getElementById('si-cancel').addEventListener('click',       () => closeModal('modal-shop-item'));
+  document.getElementById('si-save').addEventListener('click',         saveShopItem);
+  document.getElementById('modal-shop-item').addEventListener('click', e => { if(e.target===document.getElementById('modal-shop-item')) closeModal('modal-shop-item'); });
+
+  // Task modal
+  document.getElementById('task-close').addEventListener('click', () => closeModal('modal-task'));
+  document.getElementById('tk-cancel').addEventListener('click',  () => closeModal('modal-task'));
+  document.getElementById('tk-save').addEventListener('click',    saveTask);
+  document.getElementById('modal-task').addEventListener('click', e => { if(e.target===document.getElementById('modal-task')) closeModal('modal-task'); });
+  document.querySelectorAll('[data-tuid]').forEach(el =>
+    el.addEventListener('click', () => { _taskAssign = el.dataset.tuid; updateTaskAssign(); }));
+
   // Swipe navigation
   let _tx = 0, _ty = 0;
   document.getElementById('main-content').addEventListener('touchstart', e => {
@@ -1773,11 +2433,13 @@ function bindEvents() {
 // APP LOAD
 // ============================================================
 async function loadApp() {
-  document.getElementById('cal-view').innerHTML = `<div style="padding:50px 0;text-align:center"><div class="spinner"></div><div style="color:var(--text-m);font-size:14px;margin-top:8px">טוען אירועים...</div></div>`;
+  // Set initial FAB action for calendar
+  document.getElementById('btn-add')._sectionAction = openAdd;
+  document.getElementById('cal-view').innerHTML = `<div style="padding:50px 0;text-align:center"><div class="spinner"></div><div style="color:var(--text-m);font-size:14px;margin-top:8px">טוען...</div></div>`;
   let evs = await dbFetch();
   if (!evs.length && S.demo) evs = buildDemoEvents();
   S.events = evs;
-  renderCal();
+  setSection('calendar');
   if (S.demo) showToast('מצב דמו — חבר Supabase לשמירה', 4000);
 }
 

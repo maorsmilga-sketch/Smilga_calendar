@@ -110,6 +110,39 @@ CREATE TRIGGER update_events_updated_at
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================
+-- SHOPPING ITEMS TABLE
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.shopping_items (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name TEXT NOT NULL,
+  category TEXT DEFAULT 'other',
+  quantity TEXT,
+  checked BOOLEAN DEFAULT false,
+  added_by TEXT REFERENCES public.users(id),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.shopping_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "anon_all_shopping" ON public.shopping_items FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- ============================================================
+-- TASKS TABLE
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.tasks (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  title TEXT NOT NULL,
+  done BOOLEAN DEFAULT false,
+  assigned_to TEXT REFERENCES public.users(id),
+  created_by TEXT REFERENCES public.users(id),
+  done_by TEXT REFERENCES public.users(id),
+  done_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "anon_all_tasks" ON public.tasks FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- ============================================================
 -- SAMPLE DATA (אופציונלי - מחק אם אינך צריך)
 -- ============================================================
 -- INSERT INTO public.events (title, date, start_time, end_time, category, assigned_to, created_by, recurrence) VALUES
