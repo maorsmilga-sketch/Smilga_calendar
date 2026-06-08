@@ -580,7 +580,7 @@ textarea.fi { resize: none; }
   <div class="auth-header">
     <div class="auth-logo">📅</div>
     <div class="auth-title">לוח שנה משפחתי</div>
-    <div class="auth-sub">של מאור ורויית ❤️</div>
+    <div class="auth-sub">של מאור ורוית ❤️</div>
   </div>
   <div class="auth-prompt" id="auth-prompt">מי אתה? צייר את הדפוס שלך</div>
   <canvas id="pattern-canvas"></canvas>
@@ -588,7 +588,7 @@ textarea.fi { resize: none; }
   <div class="auth-hint">
     <strong style="color:rgba(255,255,255,.65)">רמז:</strong><br>
     מאור — עמודה שמאלית למטה ◀<br>
-    רויית — עמודה ימנית למטה ▶
+    רוית — עמודה ימנית למטה ▶
   </div>
 </div>
 
@@ -735,7 +735,7 @@ textarea.fi { resize: none; }
               <div class="assign-sub">🔵 כחול</div>
             </div>
             <div class="assign-opt" data-uid="ravit" id="ao-ravit">
-              <div class="assign-name" style="color:var(--ravit)">רויית</div>
+              <div class="assign-name" style="color:var(--ravit)">רוית</div>
               <div class="assign-sub">🩷 ורוד</div>
             </div>
           </div>
@@ -775,7 +775,7 @@ textarea.fi { resize: none; }
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <div class="fchip on" data-fu="all">שניהם</div>
           <div class="fchip" data-fu="maor" style="border-color:var(--maor);color:var(--maor)">מאור</div>
-          <div class="fchip" data-fu="ravit" style="border-color:var(--ravit);color:var(--ravit)">רויית</div>
+          <div class="fchip" data-fu="ravit" style="border-color:var(--ravit);color:var(--ravit)">רוית</div>
         </div>
       </div>
       <div class="fg">
@@ -811,7 +811,7 @@ textarea.fi { resize: none; }
 const SUPABASE_URL      = 'https://hancmszpkpkiifrtpysu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_YWJ9G0X8MQJJbJYiLdqZTg_lft92Wgq';
 // מספרי WhatsApp — מחליפים אוטומטית לפי מי האירוע משויך אליו
-const WHATSAPP_NUMBER   = '972526699255'; // ברירת מחדל (רויית)
+const WHATSAPP_NUMBER   = '972526699255'; // ברירת מחדל (רוית)
 
 // ============================================================
 // CONSTANTS
@@ -823,7 +823,7 @@ const USERS = {
     pattern: [0, 3, 6, 7, 8]   // עמודה שמאלית למטה + ימינה
   },
   ravit: {
-    id: 'ravit', name: 'רויית', color: '#DB2777', light: '#FCE7F3',
+    id: 'ravit', name: 'רוית', color: '#DB2777', light: '#FCE7F3',
     initials: 'רו', phone: '972526699255',
     pattern: [2, 5, 8, 7, 6]   // עמודה ימנית למטה + שמאלה
   }
@@ -861,7 +861,7 @@ function buildDemoEvents() {
     { id:'d4', title:'יום הולדת מאור',       date:`${y}-03-15`, start_time:null, end_time:null,  category:'birthday', assigned_to:'maor',  created_by:'ravit', recurrence:'yearly'  },
     { id:'d5', title:'חופשה בחו"ל',          date:d(14), start_time:'06:00', end_time:null,    category:'vacation', assigned_to:'maor',  created_by:'maor',  recurrence:'none', location:'ברצלונה, ספרד' },
     { id:'d6', title:'פגישת הורים',           date:d(1),  start_time:'20:00', end_time:'21:00', category:'family',   assigned_to:'ravit', created_by:'ravit', recurrence:'none'    },
-    { id:'d7', title:'יום הולדת רויית',       date:`${y}-07-22`, start_time:null, end_time:null,  category:'birthday', assigned_to:'ravit', created_by:'maor',  recurrence:'yearly'  },
+    { id:'d7', title:'יום הולדת רוית',       date:`${y}-07-22`, start_time:null, end_time:null,  category:'birthday', assigned_to:'ravit', created_by:'maor',  recurrence:'yearly'  },
     { id:'d8', title:'ספורט',                 date:d(0),  start_time:'18:00', end_time:'19:00', category:'work',     assigned_to:'maor',  created_by:'maor',  recurrence:'weekly'  },
   ];
 }

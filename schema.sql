@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS public.users (
 
 INSERT INTO public.users (id, name, color) VALUES
   ('maor', 'מאור', '#2563EB'),
-  ('ravit', 'רויית', '#DB2777')
+  ('ravit', 'רוית', '#DB2777')
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS public.family_members (
 
 INSERT INTO public.family_members (name, relationship, color) VALUES
   ('מאור', 'בעל', '#2563EB'),
-  ('רויית', 'אישה', '#DB2777')
+  ('רוית', 'אישה', '#DB2777')
 ON CONFLICT DO NOTHING;
 
 -- ============================================================
